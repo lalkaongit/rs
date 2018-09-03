@@ -1,0 +1,383 @@
+:root{
+    --grey: #e9ecef;
+    --accent: #1e90ff;
+}
+
+
+ .block_flot {
+    display: flex;
+    width: 100%;
+}
+.block_flot div {
+    width: 45%;
+    background-color: var(--grey);
+    padding: 3%;
+    border-radius: 20px;
+}
+.block_flot div:first-child {
+    width: 100%;
+    background-color: var(--grey);
+    padding: 3%;
+    border-radius: 20px;
+}
+button.btn.btn-primary {
+    margin-top: 15px;
+}
+.block_flot p {
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+.h2, h2 {
+    font-size: 1.6rem;
+}
+.admin .block_flot a.btn.btn-primary {
+    width: 100%;
+    display: block;
+    text-align: left;
+}
+.admin .block_flot {
+    display: block;
+    width: 100%;
+}
+.as_input {
+  background: #fff;
+  padding: 6px 13px;
+  width: 100%;
+  border-radius: 5px;
+  text-align: left;
+  margin-bottom: 0px;
+  border: 1px solid #cdcdcd;
+
+
+}
+
+.col-md-8 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 66.66666667%;
+    flex: 0 0 80.666667%;
+    max-width: 80.666667%;
+}
+span.akc {
+    font-style: italic;
+}
+.admin_menu {
+    display: block;
+    width: 100%;
+    background: var(--grey);
+    text-align: center;
+    margin-bottom: 20px;
+}
+.modal-mask {
+  position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 100%;
+      height: 100%;
+      transition: opacity .3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-container {
+  width: 300px;
+  margin: 0px auto;
+  padding: 10px 15px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  transition: all .3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.modal-header h3 {
+  margin-top: 0;
+  color: #42b983;
+  font-size: 16px;
+}
+
+.modal-body {
+  margin: 20px 0;
+}
+
+.modal-default-button {
+  float: right;
+}
+
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+.admin_menu a.btn {
+    padding: 12px;
+    border-radius: 0px;
+    color: #007bff;
+}
+.admin_menu a.btn:first-child {
+
+}
+.admin_menu a.btn:hover {
+    background: #bbb;
+}
+.btn.focus, .btn:focus {
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.row_add {
+    width: 100% !important;
+    padding: 0% !important;
+    display: flex;
+}
+.row_add div {
+    width: 47.5% !important;
+    padding: 0px !important;
+    margin-right: 5%;
+}
+.row_add div:last-child {
+    margin-right: 0% !important;
+}
+.row_add p {
+    font-size: 13px;
+}
+.disciplines {
+    width: 100%;
+    display: flex;
+    margin-bottom: 20px;
+}
+.disciplines div {
+    width: 32%;
+    background: var(--grey);
+    margin-right: 1%;
+    text-align: center;
+    padding: 2%;
+    border-radius: 15px;
+}
+tr {
+    border-style: solid;
+    border-width: 0 0px 1px 0;
+    border-color: var(--grey);
+}
+td {
+    border-style: solid;
+    border-width: 0 1px 1px 1px;
+    border-color: var(--grey);
+    padding: 6px 5px 6px 10px;
+}
+table {
+    width: 99%;
+    text-align: center;
+    box-shadow: 0 0 7px rgba(0,0,0,0.2);
+    border-radius: 9px;
+    margin: 4px;
+}
+th {
+    border-style: solid;
+    border-width: 0px 0px 0px 0px;
+    border-color: var(--grey);
+    background: var(--grey);
+    padding: 2px 2px 2px 10px;
+}
+th:first-child {
+    text-align: left;
+    border-top-left-radius: 10px;
+}
+th:last-child {
+    border-top-right-radius: 10px;
+}
+td:first-child {
+
+    text-align: left;
+}
+.disciplines div:last-child {
+    margin-right: 0%;
+}
+thead {
+    color: #333;
+}
+.tabs a {
+    background: var(--grey);
+    padding: 9px 10px;
+    border-radius: 5px;
+    margin-right: 5px;
+    color: #333 !important;
+    cursor: pointer;
+
+}
+.tabs {
+    margin-bottom: 15px;
+}
+
+td:first-child {
+    border-width: 0px 0px 0px 0px;
+}
+tr:last-child {
+    border-radius: 10px !important;
+    border-width: 0px;
+}
+tr:last-child td:first-child {
+    border-width: 0px 0px 0px 0px;
+    /* border-radius: 9px; */
+}
+.tabs a.active {
+    background: #ddd;
+}
+
+.raz {
+    overflow-x: auto;
+    width: 100%;
+}
+#chp{
+display: none;
+width: 100% !important;
+}
+#chl{
+display: none;
+width: 100% !important;
+}
+#cht{
+display: none;
+width: 100% !important;
+}
+#chr{
+display: none;
+width: 100% !important;
+}
+#chp2{
+display: none;
+width: 100% !important;
+}
+#chl2{
+display: none;
+width: 100% !important;
+}
+#cht2{
+display: none;
+width: 100% !important;
+}
+#chr2{
+display: none;
+width: 100% !important;
+}
+#chp3{
+display: none;
+width: 100% !important;
+}
+#chl3{
+display: none;
+width: 100% !important;
+}
+#cht3{
+display: none;
+width: 100% !important;
+}
+#chr3{
+display: none;
+width: 100% !important;
+}
+.row_add div {
+    width: 100% !important;
+}
+.row-param {
+    padding-top: 15px;
+    margin-top: 15px;
+}
+.h {
+    font-size: 15px;
+    padding: 5px 10px 5px 10px;
+    background: transparent;
+    color: #222;
+    border-bottom: 1px dotted #1e90ff;
+}
+.container-f div {
+    display: inline-block;
+    margin-right: 2.9%;
+    width: 30%;
+}
+.container-f div p {
+    margin: 0px;
+    font-size: 13px;
+    font-style: italic;
+}
+.percent-input {
+    width: 40px;
+    border-radius: 5px;
+}
+.row-range {
+    width: 100% !important;
+    display: flex !important;
+}
+.range-in {
+    border-radius: 14px !important;
+    height: 8px !important;
+    background: var(--accent);
+    -webkit-appearance: none;
+    margin-top: 13px;
+    margin-right: 10px;
+    margin-bottom: 13px;
+}
+.range-in::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px;
+    height: 13px;
+    background: rgba(0,77,153);
+    border-radius: 14px !important;
+}
+
+.percent-input {
+    width: 40px;
+    border-radius: 5px;
+    -webkit-appearance: none;
+    box-shadow: none !important;
+    border: 1px solid var(--accent);
+    padding-left: 7px;
+    background: transparent;
+}
+span.range-sp {
+    border: 1px solid #1e90ff;
+    border-radius: 5px;
+    padding-left: 8px;
+    margin-right: 8px;
+}
+.modal-header {
+    padding: 10px;
+    border-bottom: none;
+    padding-bottom: 0px;
+    display: block;
+  }
+  .hide{
+    display: none;
+  }
+  .activet{
+    display: block;
+  }
+  .winner {
+    border: 3px dotted var(--green);
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin-top: 15px;
+    display: inline-block;
+}
