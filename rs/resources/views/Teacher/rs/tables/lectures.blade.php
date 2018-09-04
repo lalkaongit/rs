@@ -9,7 +9,7 @@
 
 
           <?php
-        
+
 
           //Название курса
 
@@ -96,6 +96,7 @@
               ?>
               @foreach($id_row_lectures as $id_row_lecture)
               <tr>
+
                 <td>
                   <?php
                   foreach($users as $user)
@@ -179,9 +180,11 @@
             }
 
             $mass_stud_task = array_unique($mass_stud_task); // id студентов
-
+            $string_stud_task= "";
+            $string_stud_task = implode(",", $mass_stud_task);
 
             ?>
+
             <?php
             $id_stud = 0;
             $task_name = '';
@@ -277,21 +280,12 @@
             <?php } ?>
 
 
-            <span class="winner"><?php $mass_stud_r = array_unique($id_student_mass);
 
-          $ran = array_random($mass_stud_r);
-          foreach($users as $user)
-          {
-            if($user->id == $ran)
-            {
-              echo $user->surname,' ',$user->name,' ',$user->patronymic;
-            }
 
-          }
 
-          ?>  </span>
 
-          <input type="submit" class="button" name="rand" onclick="<?php $ran = array_random($mass_stud_r)?>" />
+          <button type="submit" class="button" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
+          <span id="oj" class="winner">Студент</span>
 
 
 
@@ -305,12 +299,40 @@
 </div>
 @section('js')
 
+<script>
+
+function funsuc(data)
+{
+  $("#oj").text(data);
+}
+
+function getrand(mass)
+{
+  console.log(mass);
+
+  $.ajax({
+    type: "POST",
+    beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));},
+    url:'{{URL::to("/getrand")}}',
+    dataType: "text",
+    success:function(data){
+            $("#oj").text(data);
+    },
+    data:{
+      array:mass
+    }
+  });
+}
+</script>
 
 <script>
 var app = new Vue({
   el: '#app',
   data: {
-    isActive: false
+    isActive: false,
+    array_stud: "",
+    stroka: "",
+    item: 0
   },
   methods: {
     active(){
@@ -351,6 +373,8 @@ function update(id, text, name_column)
   });
   location.reload();
 }
+
+
 
 function updatet(id, text, name_column)
 {

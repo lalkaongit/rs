@@ -361,6 +361,36 @@ class RSController extends Controller
 
     }
 
+
+    public function getrandRS(Request $request)
+    {
+
+      $objUsers = new User();
+      $users = $objUsers->get();
+
+      $arr = explode(",", $request->array);
+
+      $ran = array_random($arr);
+
+      $fio = " ";
+
+      foreach($users as $user)
+      {
+        if($user->id == $ran)
+        {
+          $fio = $user->name." ".$user->surname;
+
+        }
+
+      }
+      echo $fio;
+
+
+
+    }
+
+
+
     public function updateTRS(Request $request)
     {
 

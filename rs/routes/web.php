@@ -107,6 +107,10 @@ Route::post('/update', ['as' => '/update', 'uses' => 'Teacher\RSController@updat
 Route::post('/updatepr', ['as' => '/updatepr', 'uses' => 'Teacher\RSController@updatePracticalsRS'])->name('updatepr');
 Route::post('/updatet', ['as' => '/updatet', 'uses' => 'Teacher\RSController@updateTRS'])->name('updatet');
 
+Route::post('/getrand', ['as' => '/getrand', 'uses' => 'Teacher\RSController@getrandRS'])->name('getrand');
+
+
+
 Route::get('/clear', function() {
     Artisan::call('cache:clear');
     return "Кэш очищен.";
