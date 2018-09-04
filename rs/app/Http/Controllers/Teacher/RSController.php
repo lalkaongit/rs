@@ -220,7 +220,7 @@ class RSController extends Controller
 
               $s_o = 0;
                 $s_o = ((int)$s_task[$j]/(int)$c_task[$j]);
-              
+
 
 
               $objTask = new Task;
@@ -336,7 +336,7 @@ class RSController extends Controller
 
         foreach($lectures as $lecture)
         {
-            if($lecture->id_group == $rs->id_group && $lecture->id_discipline == $rs->id_discipline && $lecture->id_teacher == $rs->id_teacher)
+            if($lecture->id_rs == $rs->id)
             {
                 array_push($id_row_lectures, $lecture);
                 //записываю все строки в которых содержатся те студенты что принадлежат данной БРС

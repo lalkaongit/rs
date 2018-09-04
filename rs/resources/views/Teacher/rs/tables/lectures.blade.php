@@ -6,7 +6,12 @@
     <div class="col-md-8">
       <div class="card">
         <div class="card-header">
+
+
           <?php
+        
+
+          //Название курса
 
           $names_tasks = $rs->names_tasks; // строка с именами работ
           $count_tasks = $rs->count_tasks;
@@ -44,6 +49,8 @@
 
             }
           }
+          //Название курса (конец)
+
           ?>
         </div>
 
@@ -284,7 +291,7 @@
 
           ?>  </span>
 
-          <input type="submit" class="button" name="select" value="select" />
+          <input type="submit" class="button" name="rand" onclick="<?php $ran = array_random($mass_stud_r)?>" />
 
 
 
