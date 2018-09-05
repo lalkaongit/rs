@@ -1,3 +1,10 @@
+@section('session')
+
+<?php setcookie("some_cookie_name", "vu");
+?>
+
+@endsection
+
 @extends('layouts.admin')
 
 @section('content')
@@ -286,6 +293,7 @@
 
           <button type="submit" class="button" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
           <span id="oj" class="winner">Студент</span>
+
 
 
 

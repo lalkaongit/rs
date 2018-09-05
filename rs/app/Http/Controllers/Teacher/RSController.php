@@ -21,9 +21,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
+use Cookie;
 
 class RSController extends Controller
 {
+
 
     public function getIdTeacher(int $id)
     {
@@ -364,6 +366,7 @@ class RSController extends Controller
 
     public function getrandRS(Request $request)
     {
+      $fio = " ";
 
       $objUsers = new User();
       $users = $objUsers->get();
@@ -371,21 +374,44 @@ class RSController extends Controller
       $arr = explode(",", $request->array);
 
       $ran = array_random($arr);
+      $count= 0;
 
-      $fio = " ";
-
-      foreach($users as $user)
+      foreach($arr as $ar)
       {
-        if($user->id == $ran)
-        {
-          $fio = $user->name." ".$user->surname;
+          $pos = strpos(Cookie::get("some_cookie_name"), $ar);
+          if($pos !== false)
+          {
+            $count++;
+          }
+      }
 
+      $pos = strpos(Cookie::get("some_cookie_name"), $ran);
+
+
+        if($pos === false)
+        {
+          foreach($users as $user)
+          {
+            if($user->id == $ran)
+            {
+              $fio = $user->surname." ".$user->name;
+              setcookie("some_cookie_name", Cookie::get("some_cookie_name").$ran);
+            }
+          }
+        }
+        else {
+          if(count($arr) > $count)
+          {
+            $this->getrandRS($request);
+          }
+          else {
+            setcookie("some_cookie_name", "");
+            $fio = "Все студенты опрошены";
+          }
         }
 
-      }
+
       echo $fio;
-
-
 
     }
 
