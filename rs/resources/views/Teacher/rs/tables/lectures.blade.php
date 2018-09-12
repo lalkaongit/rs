@@ -9,6 +9,7 @@
 
 @section('content')
 <div class="container">
+  <image href="/kit.png"/>
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
@@ -48,11 +49,12 @@
             }
           }
 
+
           foreach($disciplines as $discipline)
           {
             if($discipline->id == $rs->id_discipline)
             {
-              echo ' (',$discipline->name, ')';
+              echo '<br> (',$discipline->name, ')';
 
             }
           }
@@ -68,12 +70,12 @@
           </div>
           @endif
           <div class="tabs">
-            <a class="active" href="{{ route('rs.lectures',['id' => $rs->id]) }}">Посещаемость</a>
+            <a v-b-toggle.accordion0 class="active">Посещаемость</a>
 
             <?php
             for ($j = 0; $j < count($names_mass); $j++)
             {
-               echo '<a v-on:click="active">',$names_mass[$j],'</a>';
+               echo '<a v-b-toggle.accordion',$j+1,'>',$names_mass[$j],'</a>';
             }
             ?>
 
@@ -83,7 +85,8 @@
           <input type="hidden" id="signup-token" name="_token" value="{{csrf_token()}}">
 
           <div class="raz">
-            <table  class="datatable" id="datatable">
+            <b-collapse id="accordion0" visible accordion="my-accordion">
+            <table class="datatable" id="datatable">
               <thead>
                 <tr>
                   <th width="230">ФИО</th>
@@ -148,7 +151,7 @@
                 $i = 0;
                 for ($i = 0; $i <= $rs->number_lectures; $i++)
                 {
-                  echo '<td class="number_td" contenteditable onblur="update(';
+                  echo '<td class="number_td" style="cursor:text;" contenteditable onblur="update(';
                   echo $id_row_lecture->id;
                   echo', $(this).text(),';
                   echo "'date_";
@@ -165,6 +168,7 @@
               </tr>
               @endforeach
             </table>
+            </b-collapse>
 
             <?php
 
@@ -195,12 +199,20 @@
             <?php
             $id_stud = 0;
             $task_name = '';
+            ?>
+            <div id="container">
+            <div id="theTarget">
+
+
+            <?php
 
             for ($i = 0; $i < $countword; $i++)
             {
               ?>
+              <div>
+                 <b-collapse id="accordion{{$i+1}}" accordion="my-accordion" >
 
-              <table class="hide" v-bind:class="{activet: isActive}">
+              <table >
 
                 <thead>
                   <tr>
@@ -261,7 +273,7 @@
 
                       if($task->id_student == $id_stud && $task->id_rs == $rs->id && $task->name_task == $task_name)
                       {
-                        echo '<td class="number_t" contenteditable onblur="updatet(';
+                        echo '<td class="number_t" style="cursor:text;" contenteditable onblur="updatet(';
                         echo $task->id;
                         echo', $(this).text(),';
                         echo "'task_";
@@ -283,15 +295,21 @@
                 ?>
 
               </table>
+              </b-collapse>
+              </div>
 
             <?php } ?>
 
 
+        </div>
+        </div>
 
 
 
 
-          <button type="submit" class="button" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
+
+
+          <button type="submit" class="button btn-stand" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
           <span id="oj" class="winner">Студент</span>
 
 
@@ -305,6 +323,12 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
 @section('js')
 
 <script>
@@ -379,7 +403,7 @@ function update(id, text, name_column)
       _token: $('#signup-token').val()
     },
   });
-  location.reload();
+
 }
 
 
@@ -399,7 +423,7 @@ function updatet(id, text, name_column)
       _token: $('#signup-token').val()
     },
   });
-  location.reload();
+
 }
 
 
@@ -416,5 +440,14 @@ $(document).ready(function(){
 });
 </script>
 
+
+
+<script>
+$(document).ready(function(){
+
+            $("#theTarget").skippr();
+
+        });
+</script>
 @endsection
 @endsection

@@ -1,7 +1,12 @@
 :root{
     --grey: #e9ecef;
     --accent: #1e90ff;
+    --back: rgba(0,0,0,0.2);
+    --backh: rgba(0,0,0,0.4);
+    --backhh: rgba(0,0,0,0.6);
+    --backfont: rgba(255,255,255,0.9);
 }
+@import url('https://fonts.googleapis.com/css?family=Lobster');
 
 
  .block_flot {
@@ -54,9 +59,9 @@ button.btn.btn-primary {
 
 .col-md-8 {
     -webkit-box-flex: 0;
-    -ms-flex: 0 0 66.66666667%;
-    flex: 0 0 80.666667%;
-    max-width: 80.666667%;
+    -ms-flex: 0 0 85.66666667%;
+    flex: 0 0 85.666667%;
+    max-width: 85.666667%;
 }
 span.akc {
     font-style: italic;
@@ -64,7 +69,7 @@ span.akc {
 .admin_menu {
     display: block;
     width: 100%;
-    background: var(--grey);
+    background: var(--back);
     text-align: center;
     margin-bottom: 20px;
 }
@@ -134,13 +139,28 @@ span.akc {
 .admin_menu a.btn {
     padding: 12px;
     border-radius: 0px;
-    color: #007bff;
+    color: var(--backfont);
+}
+.card {
+    border: none;
+  }
+  .card-header {
+    padding: .75rem 1.25rem;
+    margin-bottom: 0;
+    background-color: transparent;
+    border-bottom: none;
+    color: var(--backfont);
+    font-size: 22px;
+    width: 300px;
+    text-align: center;
+    border-radius: 100px !important;
+    margin: 0 auto;
 }
 .admin_menu a.btn:first-child {
 
 }
 .admin_menu a.btn:hover {
-    background: #bbb;
+    background: var(--backh);
 }
 .btn.focus, .btn:focus {
     outline: 0;
@@ -179,13 +199,14 @@ span.akc {
 tr {
     border-style: solid;
     border-width: 0 0px 1px 0;
-    border-color: var(--grey);
+    border-color: rgba(255,255,255,0.2);
 }
 td {
     border-style: solid;
     border-width: 0 1px 1px 1px;
-    border-color: var(--grey);
+    border-color: rgba(255,255,255,0.2);
     padding: 6px 5px 6px 10px;
+    color: var(--backfont) !important;
 }
 table {
     width: 99%;
@@ -199,7 +220,7 @@ th {
     border-width: 0px 0px 0px 0px;
     border-color: var(--grey);
     background: var(--grey);
-    padding: 2px 2px 2px 10px;
+    padding: 2px 5px 2px 5px;
 }
 th:first-child {
     text-align: left;
@@ -216,19 +237,50 @@ td:first-child {
     margin-right: 0%;
 }
 thead {
-    color: #333;
+    color: var(--backfont);
+}
+.navbar-light .navbar-brand, .navbar-light .navbar-brand:focus, .navbar-light .navbar-brand:hover {
+    color: var(--backfont);
+}
+.navbar-light .navbar-nav .nav-link {
+    color: var(--backfont);
+}
+a {
+    text-decoration: none !important;
 }
 .tabs a {
-    background: var(--grey);
-    padding: 9px 10px;
-    border-radius: 5px;
-    margin-right: 5px;
-    color: #333 !important;
-    cursor: pointer;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-top: 15px;
+  display: inline-block;
+  background: var(--back);
+  color: var(--backfont) !important;
+  border: none;
+  cursor: pointer;
+  margin-right: 6px;
 
+}
+/*table[class^='body_']{
+display:none;
+padding:15px 20px;
+}*/
+
+.tabs a:hover {
+  background: var(--backh);
+}
+.footer {
+    height: 200px;
+    background: var(--back);
+    text-align: center;
+    color: var(--backfont) !important;
+}
+
+button:focus, a:focus {
+outline: none !important;
 }
 .tabs {
     margin-bottom: 15px;
+    text-align: center;
 }
 
 td:first-child {
@@ -243,7 +295,11 @@ tr:last-child td:first-child {
     /* border-radius: 9px; */
 }
 .tabs a.active {
-    background: #ddd;
+    background: var(--backh);
+}
+
+.tabs a.active:hover {
+    background: var(--backhh);
 }
 
 .raz {
@@ -375,9 +431,44 @@ span.range-sp {
     display: block;
   }
   .winner {
-    border: 3px dotted var(--green);
+    padding: 5px 10px;
+    margin-top: 15px;
+    display: inline-block;
+    color: var(--backfont);
+}
+.btn-stand {
     border-radius: 20px;
     padding: 5px 10px;
     margin-top: 15px;
     display: inline-block;
+    background: var(--back);
+    color: var(--backfont);
+    border: none;
+    cursor: pointer;
 }
+.btn-stand:hover {
+    background: var(--backh);
+}
+body {
+    background: #43cea2;
+    background: -webkit-linear-gradient(to right, #185a9d, #43cea2);
+    background: linear-gradient(to right, #185a9d, #43cea2);
+}
+.card {
+    background-color: transparent;
+  }
+  .navbar-laravel {
+    background: var(--back);
+  }
+  th {
+    background: var(--back);
+  }
+  tr {
+    background: var(--back);
+  }
+  td:last-child {
+    border-right: none;
+  }
+  tr:last-child td {
+    border-bottom: none;
+   }

@@ -22,6 +22,7 @@
     <!-- Fonts -->
 
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 
@@ -29,8 +30,12 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+
+    <link href="{{ asset('css/skippr.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Cuprum" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
+<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
+<link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
@@ -107,6 +112,14 @@
 
             @yield('content')
         </main>
+
+        <div class="footer">
+          <a class="btn" href="{{ route('specialties') }}">Управление специальностями</a>
+          <a class="btn" href="{{ route('groups') }}">Управление группами</a>
+          <a class="btn" href="{{ route('disciplines') }}">Управление предметами</a>
+          <a class="btn" href="{{ route('rs') }}">Управление БРС</a>
+          <a class="btn" href="{{ route('import') }}">Импорт студентов</a>
+        </div>
     </div>
 
 
@@ -117,6 +130,8 @@
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="//unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
 
     @yield('js')
 
