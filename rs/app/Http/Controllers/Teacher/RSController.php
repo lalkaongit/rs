@@ -7,7 +7,9 @@ use App\Specialties;
 use App\Discipline;
 use App\Lecture;
 use App\Test;
+use App\MainTest;
 use App\Task;
+use App\Bonus;
 use App\Report;
 use App\Practical;
 use App\Institution;
@@ -108,6 +110,8 @@ class RSController extends Controller
     public function addRequestRS(Request $request)
     {
 
+
+
         $id_teacher = $request->input('id_teacher');
         $id_discipline = $request->input('id_discipline');
         $id_group= $request->input('id_group');
@@ -147,7 +151,12 @@ class RSController extends Controller
             'id_institution' => $id_institution,
             'names_tasks' => $request->input('name_tasks'),
             'count_tasks' => $request->input('count_tasks'),
-            'score_tasks' => $request->input('score_tasks')
+            'score_tasks' => $request->input('score_tasks'),
+            'count_tests' => $request->input('count_tests'),
+            'score_tests' => $request->input('score_tests'),
+            'score_main_test' => $request->input('score'),
+            'count_main_tests' => $request->input('count_main_tests'),
+            'bonus' => $request->input('bonus')
         ]);
 
 
@@ -185,6 +194,41 @@ class RSController extends Controller
 
         foreach($students as $student)
         {
+            $objTest = new Test;
+            $objTest = $objTest->create([
+                'id_student' => $students[$i],
+                'count_tests' => $request->input('count_tests'),
+                'score_one' => ($request->input('score_tests') / $request->input('count_tests')),
+                'id_rs' => $ta_rs
+            ]);
+
+            $i++;
+
+        }
+
+        $i=0;
+        //для каждого студента резервию поля для лекций
+
+        foreach($students as $student)
+        {
+            $objMainTest = new MainTest;
+            $objMainTest = $objMainTest->create([
+                'id_student' => $students[$i],
+                'count_main_tests' => $request->input('count_main_tests'),
+                'score' => ($request->input('score') / $request->input('count_main_tests')),
+                'id_rs' => $ta_rs
+            ]);
+
+            $i++;
+
+        }
+
+
+        $i=0;
+        //для каждого студента резервию поля для лекций
+
+        foreach($students as $student)
+        {
 
             $objLecture = new Lecture;
             $objLecture = $objLecture->create([
@@ -200,6 +244,7 @@ class RSController extends Controller
             $i++;
 
         }
+
 
         $word = explode(",",$request->input('name_tasks'));
 
@@ -269,6 +314,9 @@ class RSController extends Controller
         $data = array('disciplines' => $disciplines, 'groups' => $groups, 'specialties' => $specialties, 'users' => $users, 'institutions' => $institutions);
 
 
+
+
+
         return view('teacher.rs.add', $data);
     }
 
@@ -312,40 +360,46 @@ class RSController extends Controller
             return abort(404);
         }
 
-        //Смотрю все лекции, пользователей, Дисциплины, Специальности
+        $students = DB::select('select * from lectures where id_rs = ?', [$rs->id]);
 
-        $objLectures = new Lecture();
-        $lectures = $objLectures->get();
+        $tasks = DB::select('select * from tasks where id_rs = ?', [$rs->id]);
+
+        $tests = DB::select('select * from tests where id_rs = ?', [$rs->id]);
+
+        $maintests = DB::select('select * from main_test where id_rs = ?', [$rs->id]);
+
+        $bonuses = DB::select('select * from bonus where id_rs = ?', [$rs->id]);
+
+        $discipline = DB::select('select * from disciplines where id = ?', [$rs->id_discipline]);
+
+        $discipline = $discipline[0]->name;
+
+        $group = DB::select('select * from groups where id = ?', [$rs->id_group]);
+
+        $specialty = DB::select('select * from specialties where id = ?', [$group[0]->id_specialty]);
+
+        $specialty = $specialty[0]->name;
+
+        $group = $group[0];
 
         $objUsers = new User();
         $users = $objUsers->get();
 
-        $objDisciplines = new Discipline();
-        $disciplines = $objDisciplines->get();
+        $data =
 
-        $objSpecialties = new Specialties();
-        $specialties = $objSpecialties->get();
+        array(
+        'rs' => $rs,
+        'students' => $students,
+        'users' => $users,
+        'discipline' => $discipline,
+        'specialty' => $specialty,
+        'group' => $group,
+        'tasks' => $tasks,
+        'tests' => $tests,
+        'maintests' => $maintests,
+        'bonuses' => $bonuses
+         );
 
-        $objGroups = new Group();
-        $groups = $objGroups->get();
-
-        $objTask = new Task();
-        $tasks = $objTask->get();
-
-
-        $id_row_lectures = array();
-        //ищу студентов из группы для БРС
-
-        foreach($lectures as $lecture)
-        {
-            if($lecture->id_rs == $rs->id)
-            {
-                array_push($id_row_lectures, $lecture);
-                //записываю все строки в которых содержатся те студенты что принадлежат данной БРС
-            }
-        }
-
-        $data = array('rs' => $rs, 'lectures' => $lectures, 'users' => $users, 'disciplines' => $disciplines, 'specialties' => $specialties, 'id_row_lectures' => $id_row_lectures, 'groups' => $groups, 'tasks' => $tasks);
 
         return view('teacher.rs.tables.lectures', $data);
     }

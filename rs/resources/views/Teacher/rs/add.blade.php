@@ -80,7 +80,7 @@
                     <td style="width:10%">Удаление</td>
                   </tr>
 
-                  <tr  style="background-color: var(--grey);">
+                  <tr  style="background-color: rgba(255,255,255,0.2);">
                     <td><div><p class="as_input" >Аудиторные занятия</p></div></td>
                     <td><div><input type="number" name="number_lectures" class="form-control"/></div></td>
                     <td><input type="number" id="b_all_points_visits" name="all_points_visits" class="form-control"/></td>
@@ -91,13 +91,14 @@
                   </div>
                 </div></td>
               -->
-              <td style="width:10%"> <button @click="deltask(i)" type="button" class="btn btn-primary">x</button> </td>
+              <td style="width:10%"></td>
             </tr>
 
             <tr v-for="(task, i) in tasks">
               <td>
-                <select placeholder="Выберите" class="form-control" v-model="tasks[i].type">
-                  <option v-bind:value="tt" v-for="tt in tasksTypes">
+                <select  class="form-control" v-model="tasks[i].type">
+                  <option value="" disabled selected>Выберите из списка</option>
+                  <option placeholder="Выберите" v-bind:value="tt" v-for="tt in tasksTypes">
                     @{{ tt }}
                   </option>
                 </select>
@@ -106,7 +107,30 @@
               <td> <input class="form-control" v-model="tasks[i].countScore" type="number"/> </td>
               <td> <button @click="deltask(i)" type="button" class="btn btn-primary">x</button> </td>
             </tr>
+
+            <tr  style="background-color: rgba(255,255,255,0.2);">
+              <td><div><p class="as_input" >Тесты</p></div></td>
+              <td><div><input type="number" name="count_tests" placeholder="Количество тестов" class="form-control"/></div></td>
+              <td><input type="number" name="score_tests" placeholder="Баллы за все тесты" class="form-control"/></td>
+        <td style="width:10%"></td>
+      </tr>
+
+      <tr  style="background-color: rgba(255,255,255,0.2);">
+        <td><div><span class="as_input" >Итоговый тест</span></div></td>
+        <td><div><input type="number" name="count_main_tests" placeholder="Количество тестов" class="form-control"/></div></td>
+        <td><div><input type="number" placeholder="Баллы за итоговый тест" name="score" class="form-control"/></div></td>
+        <td></td>
+
+</tr>
+
+
+
+
           </table>
+
+          <p class="bonus-p">Бонусные баллы<input type="checkbox" name="bonus" class="rs_chek form-control"/></p>
+
+
 
           <div style="width: 70%;display: inline-flex;background:  #bbb;padding: 5px;border-radius: 9px;margin-top: 15px;">
 
@@ -192,7 +216,7 @@ var app = new Vue({
   el: '#app',
   data: {
     tasks: [],
-    tasksTypes: ['Практическая работа', 'Лабораторная работа', 'Самостоятельная работа', 'Тест', 'Доклад', 'Реферат', 'Итоговый тест'],
+    tasksTypes: ['Практическая работа', 'Лабораторная работа', 'Самостоятельная работа', 'Доклад', 'Реферат'],
     tasksTypes1: {
       prac:{
         name:'Практическая работа'

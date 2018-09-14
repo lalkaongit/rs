@@ -15,16 +15,12 @@ class CreateTestsTable extends Migration
     {
         Schema::create('tests', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('id_teacher')->nullable();
-            $table->integer('id_student')->nullable();
-            $table->float('id_discipline')->nullable();
-            $table->integer('id_group')->nullable();
-            $table->integer('id_rs')->nullable();
-            $table->float('sum_points')->nullable();
-            for ($x=0; $x<20; $x++)
-            {
-             $table->float("date_$x")->nullable();
-            }
+            $table->integer('id_student');
+            $table->integer('id_rs');
+            $table->integer('count_tests')->nullable();
+            $table->integer('count_questions')->nullable();
+            $table->integer('correct_answer')->nullable();
+            $table->integer('score_one')->nullable();
             $table->timestamps();
         });
     }

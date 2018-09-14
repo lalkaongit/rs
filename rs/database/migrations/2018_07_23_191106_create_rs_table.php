@@ -25,6 +25,11 @@ class CreateRsTable extends Migration
             $table->string('names_tasks')->nullable();
             $table->string('count_tasks')->nullable();
             $table->string('score_tasks')->nullable();
+            $table->integer('count_tests')->nullable();
+            $table->integer('score_main_test')->nullable();
+            $table->integer('score_tests')->nullable();
+            $table->integer('count_main_tests')->nullable();            
+            $table->string('bonus')->nullable();
             $table->timestamps();
         });
     }

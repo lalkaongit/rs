@@ -9,7 +9,7 @@ class Test extends Model
     protected $table = "tests";
 
     protected $fillable = [
-        'id_teacher', 'id_student', 'score_one_test', 'id_discipline', 'id_group', 'id_rs','sum_points'
+        'id_student', 'id_rs', 'count_questions', 'correct_answer', 'count_tests', 'score_one'
     ];
 
 }
