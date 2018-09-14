@@ -9,6 +9,6 @@ class MainTest extends Model
   protected $table = "main_test";
 
   protected $fillable = [
-      'id_student', 'id_rs', 'count_questions', 'correct_answer', 'score', 'count_main_tests'
+      'id_student', 'id_rs', 'test_0', 'id_main_test'
   ];
 }

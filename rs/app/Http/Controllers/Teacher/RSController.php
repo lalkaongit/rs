@@ -7,7 +7,9 @@ use App\Specialties;
 use App\Discipline;
 use App\Lecture;
 use App\Test;
+use App\TestInfo;
 use App\MainTest;
+use App\MainTestInfo;
 use App\Task;
 use App\Bonus;
 use App\Report;
@@ -187,41 +189,70 @@ class RSController extends Controller
             }
         }
 
-
-
-        $i=0;
-        //для каждого студента резервию поля для лекций
-
-        foreach($students as $student)
+        if( $request->input('count_tests') > 0)
         {
-            $objTest = new Test;
-            $objTest = $objTest->create([
-                'id_student' => $students[$i],
-                'count_tests' => $request->input('count_tests'),
-                'score_one' => ($request->input('score_tests') / $request->input('count_tests')),
-                'id_rs' => $ta_rs
-            ]);
+          $objTestInfo = new TestInfo;
+          $objTestInfo = $objTestInfo->create([
+              'count_tests' => $request->input('count_tests'),
+              'score_one' => ($request->input('score_tests') / $request->input('count_tests')),
+              'id_rs' => $ta_rs
+          ]);
 
-            $i++;
+          $id_test = DB::select('select * from test_info where id_rs = ?', [$ta_rs]);
 
+
+
+
+            $i=0;
+            //для каждого студента резервию поля для лекций
+
+            foreach($students as $student)
+            {
+                $objTest = new Test;
+                $objTest = $objTest->create([
+                    'id_student' => $students[$i],
+                    'id_rs' => $ta_rs,
+                    'id_test' => $id_test[0]->id
+                ]);
+
+                $i++;
+
+            }
         }
 
-        $i=0;
+
+
+
+
+        if( $request->input('count_main_tests') > 0)
+        {
+
+          $objMainTestInfo = new MainTestInfo;
+          $objMainTestInfo = $objMainTestInfo->create([
+              'count_tests' => $request->input('count_tests'),
+              'score_one' => ($request->input('score_tests') / $request->input('count_tests')),
+              'id_rs' => $ta_rs
+          ]);
+
+          $id_main_test = DB::select('select * from main_test_info where id_rs = ?', [$ta_rs]);
+
+
+          $i=0;
         //для каждого студента резервию поля для лекций
 
         foreach($students as $student)
         {
             $objMainTest = new MainTest;
             $objMainTest = $objMainTest->create([
-                'id_student' => $students[$i],
-                'count_main_tests' => $request->input('count_main_tests'),
-                'score' => ($request->input('score') / $request->input('count_main_tests')),
-                'id_rs' => $ta_rs
+              'id_student' => $students[$i],
+              'id_rs' => $ta_rs,
+              'id_test' => $id_main_test[0]->id
             ]);
 
             $i++;
 
         }
+      }
 
 
         $i=0;
@@ -359,6 +390,9 @@ class RSController extends Controller
         if(!$rs) {
             return abort(404);
         }
+        $test_info = DB::select('select * from test_info where id_rs = ?', [$rs->id]);
+
+        $main_test_info = DB::select('select * from main_test_info where id_rs = ?', [$rs->id]);
 
         $students = DB::select('select * from lectures where id_rs = ?', [$rs->id]);
 
@@ -382,6 +416,18 @@ class RSController extends Controller
 
         $group = $group[0];
 
+        if (!empty($test_info))
+        {
+          $test_info = $test_info[0];
+        }
+
+        if (!empty($main_test_info))
+        {
+          $main_test_info = $main_test_info[0];
+        }
+
+
+
         $objUsers = new User();
         $users = $objUsers->get();
 
@@ -397,7 +443,9 @@ class RSController extends Controller
         'tasks' => $tasks,
         'tests' => $tests,
         'maintests' => $maintests,
-        'bonuses' => $bonuses
+        'bonuses' => $bonuses,
+        'test_info' => $test_info,
+        'main_test_info' => $main_test_info
          );
 
 
@@ -415,6 +463,28 @@ class RSController extends Controller
 
         DB::table('lectures')->where('id', $request->id)->update($data);
 
+
+
+        $rs = DB::select('select * from rs where id = ?', [$request->rs_id]);
+
+        $string_lecture = DB::select('select * from lectures where id = ?', [$request->id]);
+
+        $sum = 0;
+        for($i = 0; $i < $rs[0]->number_lectures; $i++)
+        {
+
+          $sum = $sum + $string_lecture[0]->{'date_' . $i};
+
+        }
+
+        $score_one_lecture = $rs[0]->all_points_visits / $rs[0]->number_lectures;
+
+        $score = round($sum * $score_one_lecture, 1);
+
+        $dat['score'] = $score;
+        $dat['sum'] = $sum;
+
+        return $dat;
     }
 
 
@@ -480,6 +550,109 @@ class RSController extends Controller
         $data[$request->name_column] = $request->text;
 
         DB::table('tasks')->where('id', $request->id)->update($data);
+
+
+
+        $rs = DB::select('select * from rs where id = ?', [$request->rs_id]);
+
+        $string_task = DB::select('select * from tasks where id = ?', [$request->id]);
+
+        $sum = 0;
+        for($i = 0; $i < $request->c_task; $i++)
+        {
+
+          $sum = $sum + $string_task[0]->{'task_' . $i};
+
+        }
+
+        $score = round(($sum/100) * $request->scr_one, 1);
+
+
+
+
+
+
+
+        if(empty($request->text))
+        {
+          $sum = " - ";
+        }
+        elseif($request->text >= 85)
+          {
+            $sum = 5;
+          }
+          elseif($request->text < 85 && $request->text >= 70)
+            {
+              $sum = 4;
+            }
+            elseif($request->text < 70 && $request->text >= 55)
+            {
+              $sum = 3;
+            }
+            elseif($request->text < 55)
+            {
+              $sum = 2;
+            }
+
+
+
+
+
+
+        $dat['score'] = $score;
+        $dat['value'] = $sum;
+
+        return $dat;
+
+
+
+    }
+
+    public function updateTestRS(Request $request)
+    {
+
+
+        $data = array();
+
+        $data[$request->name_column] = $request->text;
+
+        DB::table('tests')->where('id', $request->id)->update($data);
+
+    }
+
+    public function updateTIRS(Request $request)
+    {
+
+
+        $data = array();
+
+        $data[$request->name_column] = $request->text;
+
+        DB::table('test_info')->where('id', $request->id)->update($data);
+
+    }
+
+    public function updateMAINRS(Request $request)
+    {
+
+
+        $data = array();
+
+        $data[$request->name_column] = $request->text;
+
+        DB::table('main_test')->where('id', $request->id)->update($data);
+
+    }
+
+    public function updateTImainRS(Request $request)
+    {
+
+
+        $data = array();
+
+        $data[$request->name_column] = $request->text;
+
+        DB::table('main_test_info')->where('id', $request->id)->update($data);
 
     }
 

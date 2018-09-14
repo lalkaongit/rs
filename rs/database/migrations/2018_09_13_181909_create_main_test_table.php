@@ -16,11 +16,12 @@ class CreateMainTestTable extends Migration
         Schema::create('main_test', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('id_student');
+            $table->integer('id_main_test')->nullable();
             $table->integer('id_rs');
-            $table->integer('count_questions')->nullable();
-            $table->integer('correct_answer')->nullable();
-            $table->integer('count_main_tests')->nullable();
-            $table->integer('score')->nullable();
+            for ($x=0; $x<10; $x++)
+            {
+             $table->float("test_$x")->nullable();
+            }
             $table->timestamps();
         });
     }

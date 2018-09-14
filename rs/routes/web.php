@@ -106,6 +106,14 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function() {
 Route::post('/update', ['as' => '/update', 'uses' => 'Teacher\RSController@updateLecturesRS'])->name('update');
 Route::post('/updatepr', ['as' => '/updatepr', 'uses' => 'Teacher\RSController@updatePracticalsRS'])->name('updatepr');
 Route::post('/updatet', ['as' => '/updatet', 'uses' => 'Teacher\RSController@updateTRS'])->name('updatet');
+Route::post('/updatetest', ['as' => '/updatetest', 'uses' => 'Teacher\RSController@updateTestRS'])->name('updatetest');
+Route::post('/updateti', ['as' => '/updateti', 'uses' => 'Teacher\RSController@updateTIRS'])->name('updateti');
+
+Route::post('/updatetmaini', ['as' => '/updatetmaini', 'uses' => 'Teacher\RSController@updateTImainRS'])->name('updatetmaini');
+Route::post('/updatemain', ['as' => '/updatemain', 'uses' => 'Teacher\RSController@updateMAINRS'])->name('updatemain');
+
+
+
 
 Route::post('/getrand', ['as' => '/getrand', 'uses' => 'Teacher\RSController@getrandRS'])->name('getrand');
 
