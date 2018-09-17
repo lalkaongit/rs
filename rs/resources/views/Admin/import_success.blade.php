@@ -5,10 +5,10 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">CSV Import</div>
+                    <div class="panel-heading">Импорт данных студентов</div>
 
                     <div class="panel-body">
-                        Data imported successfully.
+                        Данные сохранены.
                     </div>
                 </div>
             </div>

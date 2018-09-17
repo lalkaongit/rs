@@ -9,7 +9,6 @@
 
 @section('content')
 <div class="container">
-  <image href="/kit.png"/>
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
@@ -48,18 +47,22 @@
           @endif
           <div class="tabs">
 
-            <a v-b-toggle.accordion99 class="active" onClick="window.location.reload()">Успеваемость</a>
+            <a v-b-toggle.accordion99 onClick="window.location.reload()">Успеваемость</a>
             <a v-b-toggle.accordion0 >Посещаемость</a>
               <a v-b-toggle.accordion100 >Аттестация</a>
               </br>
 
             <?php
-            $nummassname = count($names_mass);
-            for ($j = 0; $j < $nummassname; $j++)
+            if(!empty($tasks))
             {
-              echo '<a v-b-toggle.accordion',$j+1,'>',$names_mass[$j],'</a>';
+              $nummassname = count($names_mass);
+              for ($j = 0; $j < $nummassname; $j++)
+              {
+                echo '<a v-b-toggle.accordion',$j+1,'>',$names_mass[$j],'</a>';
+              }
+              $task_name = '';
             }
-            $task_name = '';
+
 
 
 
@@ -76,7 +79,7 @@
             {
               if($maintest->id_rs == $rs->id)
               {
-                echo '<a v-b-toggle.accordion201>Итоговый тест</a>';
+                echo '<a v-b-toggle.accordion201>Итоговое тестирование</a>';
                 break;
               }
             }
@@ -92,10 +95,11 @@
 
           <input type="hidden" id="signup-token" name="_token" value="{{csrf_token()}}">
 
-
+<div>
           <div class="raz">
 
             <b-collapse id="accordion99" visible accordion="my-accordion">
+              <h2 class="name-table">Успеваемость</h2>
 
               <table>
                 <thead>
@@ -106,10 +110,13 @@
                     <th>Посещаемость</th>
 
                     <?php
+                    if(!empty($tasks))
+                    {
                     for ($i = 0; $i < $countword; $i++)
                     {
                       echo '<th >', $names_mass[$i],'</th>';
                       $task_name = $names_mass[$i];
+                    }
                     }
                     ?>
 
@@ -136,6 +143,8 @@
                 $id_student_mass = array();
                 $counter = 0;
                 $idrowlecture = 0;
+                $mainsummscoretests = 0;
+                $summscoretests = 0;
                 ?>
                 @foreach($students as $student)
                 <tr>
@@ -160,11 +169,8 @@
                         {
                           for($i = 0; $i < $count_tests; $i++)
                           {
-                            if($test_info->{'test_' . $i} ==0)
+                            if($test_info->{'test_' . $i} !=0)
                             {
-                              $summscoretests = $summscoretests + 0;
-                            }
-                            else {
                               $summscoretests = $summscoretests + (($test_info->score_one / $test_info->{'test_' . $i}) * $test->{'test_' . $i});
                             }
                           }
@@ -172,11 +178,10 @@
                       }
                     }
 
-                    ?>
-                    <?php
+
                     if (!empty($main_test_info))
                     {
-                      $mainsummscoretests = 0;
+
                       $count_tests = $main_test_info->count_tests;
 
                       foreach($maintests as $maintest)
@@ -185,11 +190,8 @@
                         {
                           for($i = 0; $i < $count_tests; $i++)
                           {
-                            if($main_test_info->{'test_' . $i} ==0)
+                            if($main_test_info->{'test_' . $i} !=0)
                             {
-                              $mainsummscoretests = $mainsummscoretests + 0;
-                            }
-                            else {
                               $mainsummscoretests = round($mainsummscoretests + (($main_test_info->score_one / $main_test_info->{'test_' . $i}) * $maintest->{'test_' . $i}), 1);
                             }
                           }
@@ -197,9 +199,6 @@
                       }
                     }
 
-                    ?>
-
-                    <?php
 
                     $sumfromwork = 0;
                     foreach($users as $user)
@@ -211,10 +210,11 @@
                         $idstudentnow = $user->id;
                       }
                     }
+                      $sumtask = 0;
 
                     for ($i = 0; $i < $countword; $i++) //от 0 до количества внекласных работ типа: (Практическая + Лабораторная + Тест = 3)
                     {
-                      $sumtask = 0;
+
                       foreach($tasks as $task)
                       {
                         if($task->id_student == $student->id_student && $task->name_task == $names_mass[$i])
@@ -225,20 +225,6 @@
                           }
                         }
                       }
-                      if (!empty($test_info))
-                        {
-                          $sumfromwork  = $sumfromwork + round($sumtask, 1) + $summscoretests;
-                        }
-                        else {
-                          $sumfromwork  = $sumfromwork + round($sumtask, 1);
-                        }
-
-                        if (!empty($main_test_info))
-                          {
-                            $sumfromwork  = $sumfromwork + $mainsummscoretests;
-                          }
-
-
 
                     }
                     ?>
@@ -254,7 +240,7 @@
                     }
                     $score_one_lecture = $rs->all_points_visits / $rs->number_lectures;
 
-                    echo round($sum * $score_one_lecture, 1)+round($sumfromwork, 1);
+                    echo round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1);
                     ?>
                   </td>
 
@@ -276,6 +262,8 @@
 
 
                   <?php //Сумма баллов за работы (Практическая, Лабораторная)
+                  if(!empty($tasks))
+                  {
 
                   for ($i = 0; $i < $countword; $i++) //от 0 до количества внекласных работ типа: (Практическая + Лабораторная + Тест = 3)
                   {
@@ -296,10 +284,9 @@
 
                     echo '<td> ',round($sumtask, 1),'</td>';
                   }
+                }
 
-                  ?>
 
-                  <?php
                   if (!empty($test_info))
                   {
                     echo '<td> ',round($summscoretests, 1), '</td>';
@@ -311,7 +298,7 @@
                   }
 
 
-?>
+                ?>
 
 
 
@@ -334,7 +321,8 @@
 
 
 
-            <b-collapse id="accordion0" accordion="my-accordion">
+            <b-collapse style="display:none;" id="accordion0" accordion="my-accordion">
+              <h2 class="name-table">Посещаемость</h2>
               <table class="datatable" id="datatable table-lec">
                 <thead>
                   <tr>
@@ -466,7 +454,13 @@
                 {
                   ?>
                   <div>
-                    <b-collapse id="accordion{{$i+1}}" accordion="my-accordion" >
+                    <b-collapse style="display:none;" id="accordion{{$i+1}}" accordion="my-accordion" >
+
+                      <h2 class="name-table"><?php  echo $names_mass[$i]; ?>
+
+
+
+                    </h2>
 
                       <table >
 
@@ -607,15 +601,18 @@
                     </b-collapse>
                   </div>
 
-                <?php }
+                <?php
+              $count_quest = array();
+            }
 
                 if (!empty($test_info))
                   {
 
                     ?>
 
-
-                <b-collapse id="accordion200" accordion="my-accordion">
+</div>
+                <b-collapse style="display:none;" id="accordion200" accordion="my-accordion">
+                    <h2 class="name-table">Тесты</h2>
                   <table >
                     <thead>
                       <tr>
@@ -627,14 +624,15 @@
                         $count_tests = $rs->count_tests;
                         for ($j = 0; $j < $count_tests; $j++)
                         {
-                          echo '<th>Тест № ',$j+1,'</th>';
+                          echo '<th colspan="',$count_tests,'">Тест № ',$j+1,'</th>';
+
                         }
                           $count_tests = $test_info->count_tests;
                         ?>
                       </tr>
 
                         <tr>
-                          <th style="border-radius:0px;" colspan="{{$count_tests}}">Количество вопросов в тесте</th>
+                          <th style="border-radius:0px;" colspan="{{$count_tests*2}}">Количество вопросов в тесте</th>
                         </tr>
                         <tr>
 
@@ -655,6 +653,12 @@
                           echo '">';
                           echo $test_info->{'test_' . $j};
                           echo '</th>';
+
+                          array_push($count_quest, $test_info->{'test_' . $j});
+
+
+
+                          echo '<th class="none">Оценка </th>';
                         }
                         ?>
 
@@ -686,16 +690,14 @@
                         ?>
                       </td>
 
-                      <td>
+                      <td id="{{$counter-1}}summtest">
                         <?php
+
                         $summscoretests = 0;
                         for($i = 0; $i < $count_tests; $i++)
                         {
-                          if($test_info->{'test_' . $i} ==0)
+                          if($test_info->{'test_' . $i} != 0)
                           {
-                            $summscoretests = $summscoretests + 0;
-                          }
-                          else {
                             $summscoretests = $summscoretests + (($test_info->score_one / $test_info->{'test_' . $i}) * $test->{'test_' . $i});
                           }
 
@@ -711,6 +713,14 @@
                         for ($j = 0; $j < $count_tests; $j++)
                         {
                           echo '<td class="number_t" style="cursor:text;" contenteditable onblur="updatetest(';
+                          echo $count_quest[$j];
+                          echo ',';
+                          echo $j;
+                          echo ',';
+                          echo $counter-1;
+                          echo ',';
+                          echo $rs->id;
+                          echo ',';
                           echo $test->id;
                           echo', $(this).text(),';
                           echo "'test_";
@@ -722,6 +732,38 @@
                           echo '">';
                           echo $test->{'test_' . $j};
                           echo '</td>';
+
+                          if(!empty($test->{'test_' . $j}))
+                          {
+                            $scorefortest = ($test->{'test_' . $j} / $count_quest[$j])  * 100;
+                          }
+
+
+
+
+                          if(empty($test->{'test_' . $j}))
+                          {
+                            echo '<td id="',$j,'valuet',$counter-1,'"> - </td>';
+                          }
+                          else {
+                            if($scorefortest >= 85)
+                            {
+                              echo '<td id="',$j,'valuet',$counter-1,'">', 5, '</td>';
+                            }
+                            if($scorefortest < 85 && $scorefortest >= 70)
+                            {
+                              echo '<td id="',$j,'valuet',$counter-1,'">', 4, '</td>';
+                            }
+                            if($scorefortest < 70 && $scorefortest >= 55)
+                            {
+                              echo '<td id="',$j,'valuet',$counter-1,'">', 3, '</td>';
+                            }
+                            if($scorefortest < 55)
+                            {
+                              echo '<td id="',$j,'valuet',$counter-1,'">', 2, '</td>';
+                            }
+                          }
+
                         }
                         ?>
 
@@ -738,6 +780,8 @@
               <?php
             }
 
+            $count_quest_main = array();
+
 
 
               if (!empty($main_test_info))
@@ -746,7 +790,8 @@
                   ?>
 
 
-              <b-collapse id="accordion201" accordion="my-accordion">
+              <b-collapse style="display:none;" id="accordion201" accordion="my-accordion">
+                  <h2 class="name-table">Итоговое тестирование</h2>
                 <table >
                   <thead>
                     <tr>
@@ -758,14 +803,15 @@
                       $count_tests = $main_test_info->count_tests;
                       for ($j = 0; $j < $count_tests; $j++)
                       {
-                        echo '<th>Итоговый тест № ',$j+1,'</th>';
+                        echo '<th colspan="',$count_tests,'">Итоговый тест № ',$j+1,'</th>';
+
                       }
 
                       ?>
                     </tr>
 
                       <tr>
-                        <th style="border-radius:0px;" colspan="{{$count_tests}}">Количество вопросов в тесте</th>
+                        <th style="border-radius:0px;" colspan="{{$count_tests*2}}">Количество вопросов в тесте</th>
                       </tr>
                       <tr>
 
@@ -786,6 +832,10 @@
                         echo '">';
                         echo $main_test_info->{'test_' . $j};
                         echo '</th>';
+
+                        array_push($count_quest_main, $main_test_info->{'test_' . $j});
+
+                        echo '<th class="none">Оценка </th>';
                       }
                       ?>
 
@@ -817,7 +867,7 @@
                       ?>
                     </td>
 
-                    <td  >
+                    <td  id ="{{$counter-1}}summtest-main">
                       <?php
                       $summscoretests = 0;
                       for($i = 0; $i < $count_tests; $i++)
@@ -842,6 +892,14 @@
                       for ($j = 0; $j < $count_tests; $j++)
                       {
                         echo '<td class="number_t" style="cursor:text;" contenteditable onblur="updatemain(';
+                        echo $count_quest_main[$j];
+                        echo ',';
+                        echo $j;
+                        echo ',';
+                        echo $counter-1;
+                        echo ',';
+                        echo $rs->id;
+                        echo ',';
                         echo $maintest->id;
                         echo', $(this).text(),';
                         echo "'test_";
@@ -853,6 +911,38 @@
                         echo '">';
                         echo $maintest->{'test_' . $j};
                         echo '</td>';
+
+
+                        if(!empty($maintest->{'test_' . $j}))
+                        {
+                          $scorefortest = ($maintest->{'test_' . $j} / $count_quest_main[$j])  * 100;
+                        }
+
+
+                        if(empty($maintest->{'test_' . $j}))
+                        {
+                          echo '<td id="',$j,'valuet-main',$counter-1,'"> - </td>';
+                        }
+                        else {
+                          if($scorefortest >= 85)
+                          {
+                            echo '<td id="',$j,'valuet-main',$counter-1,'">', 5, '</td>';
+                          }
+                          if($scorefortest < 85 && $scorefortest >= 70)
+                          {
+                            echo '<td id="',$j,'valuet-main',$counter-1,'">', 4, '</td>';
+                          }
+                          if($scorefortest < 70 && $scorefortest >= 55)
+                          {
+                            echo '<td id="',$j,'valuet-main',$counter-1,'">', 3, '</td>';
+                          }
+                          if($scorefortest < 55)
+                          {
+                            echo '<td id="',$j,'valuet-main',$counter-1,'">', 2, '</td>';
+                          }
+                        }
+
+
                       }
                       ?>
 
@@ -1001,11 +1091,11 @@ function updatetmaini(id, text, name_column)
     },
   });
 
-  location.reload();
+
 
 }
 
-function updatemain(id, text, name_column)
+function updatemain(count_quest, test, str, rs_id,id, text, name_column)
 {
 
   var st = text.replace(",",".");
@@ -1017,15 +1107,23 @@ function updatemain(id, text, name_column)
       text:st,
       name_column:name_column,
       id: id,
+      rs_id: rs_id,
+      str: str,
+      test: test,
+      count_quest: count_quest,
       _token: $('#signup-token').val()
     },
+    success: function(dat){
+        $("#" + str + "summtest-main").html(dat['score'])
+
+        $("#" + test + "valuet-main" + str).html(dat['value'])
+    }
   });
 
-  location.reload();
 
 }
 
-function updatetest(id, text, name_column)
+function updatetest(count_quest, test, str, rs_id, id, text, name_column)
 {
 
   var st = text.replace(",",".");
@@ -1037,11 +1135,19 @@ function updatetest(id, text, name_column)
       text:st,
       name_column:name_column,
       id: id,
+      rs_id: rs_id,
+      str: str,
+      test: test,
+      count_quest: count_quest,
       _token: $('#signup-token').val()
     },
+    success: function(dat){
+        $("#" + str + "summtest").html(dat['score'])
+
+        $("#" + test + "valuet" + str).html(dat['value'])
+    }
   });
 
-  location.reload();
 
 }
 
@@ -1061,7 +1167,6 @@ function updateti(id, text, name_column)
     },
   });
 
-  location.reload();
 
 }
 

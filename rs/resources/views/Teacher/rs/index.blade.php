@@ -39,7 +39,7 @@
 
            </h3>
 
-           <p>Группа
+           <p>Группа:
                <?php
                foreach($groups as $group)
                {
@@ -62,28 +62,33 @@
 
            <p>Количество лекций: {{$rs->number_lectures}} / <?php  if($rs->all_points_visits > 0 && $rs->number_lectures > 0) { $b_l = ($rs->all_points_visits) / ($rs->number_lectures); }else $b_l = 0; ?>  {{ round($b_l, 1) }} за лекцию / За все лекции {{$rs->all_points_visits}}</p>
 
-<p style="font-weight: 600;">
-  Внеурочные работы студента:
-</p>
+
 
             <?php
-
-            $names_tasks = $rs->names_tasks;
-            $count_tasks = $rs->count_tasks;
-            $score_tasks = $rs->score_tasks;
-
-            $names_mass = explode(",",$names_tasks);
-            $count_mass = explode(",",$count_tasks);
-            $score_mass = explode(",",$score_tasks);
-
-            $countword = count($names_mass);
-
-            for ($j = 0; $j < $countword; $j++)
+            if (!is_null($rs->count_tasks))
             {
-              echo '<p>', $names_mass[$j], ': ', $count_mass[$j], ' шт. /';
-              echo round($score_mass[$j]/$count_mass[$j], 1),' за работу / за все ', $score_mass[$j],'</p>';
 
+              echo '<p style="font-weight: 600;">Внеурочные работы студента: </p>';
+
+              $names_tasks = $rs->names_tasks;
+              $count_tasks = $rs->count_tasks;
+              $score_tasks = $rs->score_tasks;
+
+              $names_mass = explode(",",$names_tasks);
+              $count_mass = explode(",",$count_tasks);
+              $score_mass = explode(",",$score_tasks);
+
+              $countword = count($names_mass);
+
+              for ($j = 0; $j < $countword; $j++)
+              {
+                echo '<p>', $names_mass[$j], ': ', $count_mass[$j], ' шт. /';
+                echo round($score_mass[$j]/$count_mass[$j], 1),' за работу / за все ', $score_mass[$j],'</p>';
+
+              }
             }
+
+
 
             ?>
 

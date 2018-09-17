@@ -112,8 +112,6 @@ class RSController extends Controller
     public function addRequestRS(Request $request)
     {
 
-
-
         $id_teacher = $request->input('id_teacher');
         $id_discipline = $request->input('id_discipline');
         $id_group= $request->input('id_group');
@@ -276,44 +274,45 @@ class RSController extends Controller
 
         }
 
+        if ($request->input('count_tasks') != null)
+        {
+          $word = explode(",",$request->input('name_tasks'));
+          $c_task = explode(",",$request->input('count_tasks'));
+          $s_task = explode(",",$request->input('score_tasks'));
 
-        $word = explode(",",$request->input('name_tasks'));
+          $countword = count($word);
 
-        $c_task = explode(",",$request->input('count_tasks'));
-        $s_task = explode(",",$request->input('score_tasks'));
+          //если внеурочные работы есть, то поля
 
-        $countword = count($word);
+          if( $countword > 0 ){
 
-        //если внеурочные работы есть, то поля
+            $i=0;
 
-        if( $countword > 0 ){
+            foreach($students as $student)
+            {
 
+              for ($j = 0; $j < $countword; $j++) {
 
-          $i=0;
-
-          foreach($students as $student)
-          {
-
-            for ($j = 0; $j < $countword; $j++) {
-
-              $s_o = 0;
+                $s_o = 0;
                 $s_o = ((int)$s_task[$j]/(int)$c_task[$j]);
 
+                $objTask = new Task;
+                $task = $objTask->create([
+                  'id_student' => $students[$i],
+                  'name_task' => $word[$j],
+                  'score_one' => $s_o,
+                  'id_rs' => $ta_rs
+                ]);
 
+              }
 
-              $objTask = new Task;
-              $task = $objTask->create([
-                'id_student' => $students[$i],
-                'name_task' => $word[$j],
-                'score_one' => $s_o,
-                'id_rs' => $ta_rs
-              ]);
+              $i++;
 
             }
-
-            $i++;
-
           }
+
+
+
         }
 
 
@@ -447,6 +446,7 @@ class RSController extends Controller
         'test_info' => $test_info,
         'main_test_info' => $main_test_info
          );
+
 
 
         return view('teacher.rs.tables.lectures', $data);
@@ -618,6 +618,71 @@ class RSController extends Controller
 
         DB::table('tests')->where('id', $request->id)->update($data);
 
+
+
+        $rs = DB::select('select * from rs where id = ?', [$request->rs_id]);
+
+        $string_test = DB::select('select * from tests where id = ?', [$request->id]);
+
+        $string_test_info = DB::select('select * from test_info where id_rs = ?', [$request->rs_id]);
+
+
+        $count_test = $rs[0]->count_tests;
+        $score_one = $rs[0]->score_tests / $count_test;
+        $score = 0;
+
+
+        for($i = 0; $i < $count_test; $i++)
+        {
+            $score = $score + ($score_one / $string_test_info[0]->{'test_' . $i} * $string_test[0]->{'test_' . $i});
+        }
+
+        $result = $request->text;
+        $j = $request->test;
+        $scorefortest = 0;
+        $sum = '-';
+        $countquest = $string_test_info[0]->{'test_' . $j};
+
+
+
+        if(($result != 0) && ($countquest != 0))
+        {
+          $scorefortest = ($result / $countquest)  * 100;
+        }
+
+
+
+
+        if(empty($result))
+        {
+          $sum = '-';
+        }
+        else {
+          if($scorefortest >= 85)
+          {
+            $sum = '5';
+          }
+          if($scorefortest < 85 && $scorefortest >= 70)
+          {
+            $sum = '4';
+          }
+          if($scorefortest < 70 && $scorefortest >= 55)
+          {
+            $sum = '3';
+          }
+          if($scorefortest < 55)
+          {
+            $sum = '2';
+          }
+        }
+
+
+        $dat['score'] = round($score, 1);
+        $dat['value'] = $sum;
+        $dat['str'] = $request->str;
+
+        return $dat;
+
     }
 
     public function updateTIRS(Request $request)
@@ -641,6 +706,70 @@ class RSController extends Controller
         $data[$request->name_column] = $request->text;
 
         DB::table('main_test')->where('id', $request->id)->update($data);
+
+
+        $rs = DB::select('select * from rs where id = ?', [$request->rs_id]);
+
+        $string_test = DB::select('select * from main_test where id = ?', [$request->id]);
+
+        $string_test_info = DB::select('select * from main_test_info where id_rs = ?', [$request->rs_id]);
+
+
+        $count_test = $rs[0]->count_main_tests;
+        $score_one = $rs[0]->score_main_test / $count_test;
+        $score = 0;
+
+
+        for($i = 0; $i < $count_test; $i++)
+        {
+            $score = $score + ($score_one / $string_test_info[0]->{'test_' . $i} * $string_test[0]->{'test_' . $i});
+        }
+
+        $result = $request->text;
+        $j = $request->test;
+        $scorefortest = 0;
+        $sum = '-';
+        $countquest = $string_test_info[0]->{'test_' . $j};
+
+
+
+        if(($result != 0) && ($countquest != 0))
+        {
+          $scorefortest = ($result / $countquest)  * 100;
+        }
+
+
+
+
+        if(empty($result))
+        {
+          $sum = '-';
+        }
+        else {
+          if($scorefortest >= 85)
+          {
+            $sum = '5';
+          }
+          if($scorefortest < 85 && $scorefortest >= 70)
+          {
+            $sum = '4';
+          }
+          if($scorefortest < 70 && $scorefortest >= 55)
+          {
+            $sum = '3';
+          }
+          if($scorefortest < 55)
+          {
+            $sum = '2';
+          }
+        }
+
+
+        $dat['score'] = round($score, 1);
+        $dat['value'] = $sum;
+        $dat['str'] = $request->str;
+
+        return $dat;
 
     }
 

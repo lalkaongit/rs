@@ -6,7 +6,23 @@
     --backhh: rgba(0,0,0,0.6);
     --backfont: rgba(255,255,255,0.9);
     --maingrey: #253a3f;
+    --backcy: #F4C01A;
+    --backco: #FF9152;
+    --dark: #194983;
 }
+h2.name-table {
+    color: var(--backcy);
+    margin-bottom: 15px;
+}
+
+.card-body {
+    padding-top: 0px;
+}
+.icon-school{
+  font-size: 30px;
+  text-align: center;
+}
+
 @import url('https://fonts.googleapis.com/css?family=Lobster');
 
 
@@ -20,6 +36,18 @@
     padding: 3%;
     border-radius: 20px;
 }
+td:nth-child(3) {
+    background: rgba(0,0,0,0.5);
+}
+tr:first-child th:nth-child(3) {
+    background: rgba(0,0,0,0.5);
+    max-width: 85px !important;
+width: 85px;
+}
+
+tbody tr:hover {
+    background: rgba(0,0,0,0.5);
+   }
 .izi{
   font-style: italic;
     color: rgba(255,255,255,0.7);
@@ -204,6 +232,8 @@ span.akc {
     width: 100%;
     display: flex;
     margin-bottom: 20px;
+    flex-direction: row;
+  flex-wrap: wrap;
 }
 .disciplines div {
     width: 32%;
@@ -213,6 +243,7 @@ span.akc {
     padding: 35px 10px;
     border-radius: 15px;
     color: var(--backfont);
+    margin-bottom: 1%;
 }
 .disciplines div a {
     background: var(--maingrey);
@@ -252,14 +283,14 @@ th {
     background: var(--grey);
     padding: 2px 5px 2px 5px;
 }
-th:first-child {
+tr:first-child th:first-child {
 
     border-top-left-radius: 10px;
 }
 tr:first-child {
     border-bottom: none !important;
 }
-th:last-child {
+tr:first-child th:last-child {
     border-top-right-radius: 10px;
 }
 td:first-child {
@@ -318,6 +349,17 @@ outline: none !important;
 .tabs {
     margin-bottom: 15px;
     text-align: center;
+}
+.group-name {
+    font-size: 29px;
+    color: var(--yellow);
+}
+.fa-group-c {
+    font-size: 29px;
+    padding-bottom: 13px;
+}
+.discipline-name {
+    font-style: italic;
 }
 
 td:first-child {
@@ -515,6 +557,7 @@ body {
     background: #43cea2;
     background: -webkit-linear-gradient(to right, #185a9d, #43cea2);
     background: linear-gradient(to right, #185a9d, #43cea2);
+    color: #fff;
 }
 .card {
     background-color: transparent;

@@ -5,6 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
+              <i class="fas fa-school icon-school"></i>
                 <div class="card-header">{{ __('Регистрация учебного заведения') }}</div>
 
                 <div class="card-body">

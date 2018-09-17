@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">CSV Import</div>
+                    <div class="panel-heading">Импорт дисциплин</div>
 
                     <div class="panel-body">
                         <form class="form-horizontal" method="POST" action="{{ route('import_process_discp') }}">
@@ -42,7 +42,7 @@
                             </table>
 
                             <button type="submit" class="btn btn-primary">
-                                Import Data
+                                Загрузить
                             </button>
                         </form>
                     </div>
