@@ -129,6 +129,8 @@ Route::get('/clear', function() {
 Route::group(['middleware' => ['teacher'], 'prefix' => 'teacher'], function() {
     Route::get('/', 'Teacher\AccountController@index')->name('teacher');
 
+    Route::delete('/delete', 'Teacher\RSController@deleteRS')->name('rss.delete');
+
     Route::get('/rs', 'Teacher\RSController@index')->name('rs');
     Route::get('/rs/add', 'Teacher\RSController@addRS')->name('rs.add');
     Route::post('/rs/add', 'Teacher\RSController@addRequestRS');

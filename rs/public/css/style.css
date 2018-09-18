@@ -244,6 +244,16 @@ span.akc {
     border-radius: 15px;
     color: var(--backfont);
     margin-bottom: 1%;
+    position: relative;
+    box-shadow: 0 3px 7px rgba(0,0,0,0.3)
+}
+.disciplines .delete {
+    padding: 0px 10px 3px;
+    position: absolute;
+    top: -22px;
+    right: -10px;
+    border-radius: 20px;
+    background: firebrick;
 }
 .disciplines div a {
     background: var(--maingrey);
@@ -342,6 +352,11 @@ padding:15px 20px;
     text-align: center;
     color: var(--backfont) !important;
 }
+td:nth-child(2) {
+    min-width: 255px !important;
+    text-align: left !important;
+}
+
 
 button:focus, a:focus {
 outline: none !important;
@@ -357,6 +372,7 @@ outline: none !important;
 .fa-group-c {
     font-size: 29px;
     padding-bottom: 13px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 .discipline-name {
     font-style: italic;

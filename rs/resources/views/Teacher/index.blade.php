@@ -57,6 +57,7 @@
                             </p>
                             <p><a style="background: var(--back);margin-right:8px;" href="{!! route('rs.view', ['id' => $trs]) !!}">Подробнее</a>
                             <a href="{!! route('rs.lectures', ['id' => $trs]) !!}">Журнал</a></p>
+                             <a href="javascript:;" class="delete" rel="{{$trs->id}}">x</a>
 
                         </div>
                         @endforeach
@@ -68,4 +69,29 @@
 
     </div>
 </div>
+
+@section('js')
+   <script>
+       $(function(){
+           $(".delete").on('click', function () {
+               if(confirm("Вы действительно хотите удалить эту запись ?")) {
+                   let id = $(this).attr("rel");
+                   $.ajax({
+                       type: "DELETE",
+                       url: "{!! route('rss.delete') !!}",
+                       data: {_token:"{{csrf_token()}}", id:id},
+                       complete: function() {
+                           alert("Статья удалена");
+                           location.reload();
+                       }
+                   });
+               }else{
+                   alertify.error("Дествие отменено пользователем");
+               }
+           });
+       });
+   </script>
+
+@endsection
+
 @endsection

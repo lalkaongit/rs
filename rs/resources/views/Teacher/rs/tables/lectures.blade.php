@@ -323,7 +323,7 @@
 
             <b-collapse style="display:none;" id="accordion0" accordion="my-accordion">
               <h2 class="name-table">Посещаемость</h2>
-              <table class="datatable" id="datatable table-lec">
+              <table class="datatable my-div" id="datatable table-lec table-rs">
                 <thead>
                   <tr>
                     <th>№</th>
@@ -393,7 +393,7 @@
                   $i = 0;
                   for ($i = 0; $i < $rs->number_lectures; $i++)
                   {
-                    echo '<td class="number_td" style="cursor:text;" contenteditable onblur="update(';
+                    echo '<td oncontextmenu="$(this).html(1);" onClick="$(this).html(0);" class="number_td" style="cursor:text;" contenteditable onblur="update(';
                     echo $rs->id, ",";
                     echo $counter-1, ",";
                     echo $student->id;
@@ -1210,6 +1210,15 @@ $(document).ready(function(){
 
 });
 </script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	    $(".my-div").on("contextmenu",function(){
+	       return false;
+	    });
+	});
+</script>
+
 
 
 @endsection
