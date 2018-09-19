@@ -111,6 +111,7 @@ Route::post('/updateti', ['as' => '/updateti', 'uses' => 'Teacher\RSController@u
 
 Route::post('/updatetmaini', ['as' => '/updatetmaini', 'uses' => 'Teacher\RSController@updateTImainRS'])->name('updatetmaini');
 Route::post('/updatemain', ['as' => '/updatemain', 'uses' => 'Teacher\RSController@updateMAINRS'])->name('updatemain');
+Route::post('/update-date', ['as' => '/update-date', 'uses' => 'Teacher\RSController@updateDATE'])->name('update-date');
 
 
 

@@ -105,7 +105,6 @@
                 <a class="btn" href="{{ route('specialties') }}">Управление специальностями</a>
                 <a class="btn" href="{{ route('groups') }}">Управление группами</a>
                 <a class="btn" href="{{ route('disciplines') }}">Управление предметами</a>
-                <a class="btn" href="{{ route('rs') }}">Управление БРС</a>
                 <a class="btn" href="{{ route('import') }}">Импорт студентов</a>
             </div>
 

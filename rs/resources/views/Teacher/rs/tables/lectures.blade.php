@@ -331,9 +331,34 @@
                     <th>Всего <br/>баллов </th>
                     <th>Посещено <br/>лекций</th>
                     <?php
+                    $first_date = $dates[0]->date_0;
+
+
                     for ($i = 0; $i < $rs->number_lectures; $i++)
                     {
-                      echo '<th>Дата </th>';
+
+                      if(is_null($dates[0]->{'date_' . $i}))
+                      {
+                        echo '<th style="cursor:text;" oncontextmenu="$(this).html(',date("d.m"),');" contenteditable onblur="update_date(';
+                        echo $rs->id;
+                        echo', $(this).text(),';
+                        echo "'date_";
+                        echo $i;
+                        echo "'";
+                        echo ')" >';
+                        echo date("d.m", strtotime($first_date)),' </th>';
+                      }
+                      else {
+                        echo '<th style="cursor:text;" oncontextmenu="$(this).html(',date("d.m"),');" contenteditable onblur="update_date(';
+                        echo $rs->id;
+                        echo', $(this).text(),';
+                        echo "'date_";
+                        echo $i;
+                        echo "'";
+                        echo ')" >';
+                        echo $dates[0]->{'date_' . $i},' </th>';
+                      }
+
                     }
                     ?>
                   </tr>
@@ -393,7 +418,7 @@
                   $i = 0;
                   for ($i = 0; $i < $rs->number_lectures; $i++)
                   {
-                    echo '<td oncontextmenu="$(this).html(1);" onClick="$(this).html(0);" class="number_td" style="cursor:text;" contenteditable onblur="update(';
+                    echo '<td onClick="$(this).html(1);" oncontextmenu="$(this).html(0);" class="number_td" style="cursor:text;" contenteditable onblur="update(';
                     echo $rs->id, ",";
                     echo $counter-1, ",";
                     echo $student->id;
@@ -710,11 +735,12 @@
 
                         <?php
                         $count_tests = $test_info->count_tests;
+
                         for ($j = 0; $j < $count_tests; $j++)
                         {
+
+
                           echo '<td class="number_t" style="cursor:text;" contenteditable onblur="updatetest(';
-                          echo $count_quest[$j];
-                          echo ',';
                           echo $j;
                           echo ',';
                           echo $counter-1;
@@ -733,7 +759,7 @@
                           echo $test->{'test_' . $j};
                           echo '</td>';
 
-                          if(!empty($test->{'test_' . $j}))
+                          if(!empty($test->{'test_' . $j}) && $count_quest[$j] != 0)
                           {
                             $scorefortest = ($test->{'test_' . $j} / $count_quest[$j])  * 100;
                           }
@@ -741,7 +767,7 @@
 
 
 
-                          if(empty($test->{'test_' . $j}))
+                          if(empty($test->{'test_' . $j}) || $count_quest[$j] == 0)
                           {
                             echo '<td id="',$j,'valuet',$counter-1,'"> - </td>';
                           }
@@ -892,8 +918,6 @@
                       for ($j = 0; $j < $count_tests; $j++)
                       {
                         echo '<td class="number_t" style="cursor:text;" contenteditable onblur="updatemain(';
-                        echo $count_quest_main[$j];
-                        echo ',';
                         echo $j;
                         echo ',';
                         echo $counter-1;
@@ -913,7 +937,7 @@
                         echo '</td>';
 
 
-                        if(!empty($maintest->{'test_' . $j}))
+                        if(!empty($maintest->{'test_' . $j}) && $count_quest_main[$j] != 0)
                         {
                           $scorefortest = ($maintest->{'test_' . $j} / $count_quest_main[$j])  * 100;
                         }
@@ -970,10 +994,38 @@
 
 
 
+<div class="bonus-form">
+  <p>Проставлялка бонусных баллов</p>
 
-            <button type="submit" class="button btn-stand" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
+  <div style="margin-left:  20px;">
+            <a v-on:click="score = '5'">5</a>
+            <a v-on:click="score = '10'">10</a>
+            <a v-on:click="score = '15'">15</a>
+            <a v-on:click="score = '20'">20</a>
+            <a v-on:click="score = '25'">25</a>
+            <a v-on:click="score = '30'">30</a>
+            </br>
+            <input placeholder="Количество баллов" v-model="score"/>
+          </div>
+          <div>
+            <a v-on:click="namescore = 'По презентации'">По презентации</a>
+            <a v-on:click="namescore = 'По практическим'">По практическим</a>
+            <a v-on:click="namescore = 'По компетенциям'">По компетенциям</a>
+            <a v-on:click="namescore = 'По компетенциям'">По схемам</a>
+            </br>
+            <input     style="width: 400px;" placeholder="Тема вопроса" v-model="namescore"/>
+            </div>
+<div>
+            <button type="submit" class="button btn-stand"  style="margin-left:  20px;" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
             <span id="oj" class="winner">Студент</span>
+            <input id="obj" style="display:none;"/>
             <span id="likes_number"></span>
+
+            <button type="submit" class="button btn-stand" onClick="plus()">Ответил</button>
+            <button type="submit" class="button btn-stand minus" onClick="minus()">Не ответил</button>
+            </div>
+
+          </div>
 
 
 
@@ -1009,9 +1061,10 @@ function getrand(mass)
     type: "POST",
     beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));},
     url:'{{URL::to("/getrand")}}',
-    dataType: "text",
-    success:function(data){
-      $("#oj").text(data);
+    success: function(dat){
+    $("#oj").text(dat['fio']);
+    $("#obj").html(dat['id']);
+
     },
     data:{
       array:mass
@@ -1027,7 +1080,9 @@ var app = new Vue({
     isActive: false,
     array_stud: "",
     stroka: "",
-    item: 0
+    item: 0,
+    score: "",
+    namescore: ""
   },
   methods: {
     active(){
@@ -1095,7 +1150,7 @@ function updatetmaini(id, text, name_column)
 
 }
 
-function updatemain(count_quest, test, str, rs_id,id, text, name_column)
+function updatemain(test, str, rs_id,id, text, name_column)
 {
 
   var st = text.replace(",",".");
@@ -1110,7 +1165,6 @@ function updatemain(count_quest, test, str, rs_id,id, text, name_column)
       rs_id: rs_id,
       str: str,
       test: test,
-      count_quest: count_quest,
       _token: $('#signup-token').val()
     },
     success: function(dat){
@@ -1123,7 +1177,7 @@ function updatemain(count_quest, test, str, rs_id,id, text, name_column)
 
 }
 
-function updatetest(count_quest, test, str, rs_id, id, text, name_column)
+function updatetest(test, str, rs_id, id, text, name_column)
 {
 
   var st = text.replace(",",".");
@@ -1138,7 +1192,6 @@ function updatetest(count_quest, test, str, rs_id, id, text, name_column)
       rs_id: rs_id,
       str: str,
       test: test,
-      count_quest: count_quest,
       _token: $('#signup-token').val()
     },
     success: function(dat){
@@ -1170,6 +1223,24 @@ function updateti(id, text, name_column)
 
 }
 
+function update_date(id_rs, text, name_column)
+{
+
+  var st = text.replace(",",".");
+  console.log(name_column);
+  $.ajax({
+    type: "POST",
+    url:'{{URL::to("/update-date")}}',
+    data:{
+      text:st,
+      name_column:name_column,
+      id_rs: id_rs,
+      _token: $('#signup-token').val()
+    },
+  });
+
+
+}
 
 function updatet(rs_id, id, id_task, idrow, scr_one, c_task ,text, name_column, j)
 {

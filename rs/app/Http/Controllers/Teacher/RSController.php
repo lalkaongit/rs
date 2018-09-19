@@ -11,6 +11,7 @@ use App\TestInfo;
 use App\MainTest;
 use App\MainTestInfo;
 use App\Task;
+use App\Dates;
 use App\Bonus;
 use App\Report;
 use App\Practical;
@@ -160,6 +161,10 @@ class RSController extends Controller
         ]);
 
 
+
+
+
+
         $objRS = new RS;
         $rss =   $objRS->get();
         $ta_rs = 0;
@@ -171,6 +176,16 @@ class RSController extends Controller
                 $ta_rs = $rs->id;
             }
         }
+
+        $today = date("d.m");
+
+        $objDates = new Dates;
+        $objDates = $objDates->create([
+            'date_' . '0' => $today,
+            'count_lec' => $number_lectures,
+            'id_rs' => $ta_rs
+
+        ]);
 
 
         $objUsers = new User();
@@ -411,6 +426,8 @@ class RSController extends Controller
 
         $specialty = DB::select('select * from specialties where id = ?', [$group[0]->id_specialty]);
 
+        $dates = DB::select('select * from dates where id_rs = ?', [$rs->id]);
+
         $specialty = $specialty[0]->name;
 
         $group = $group[0];
@@ -444,7 +461,8 @@ class RSController extends Controller
         'maintests' => $maintests,
         'bonuses' => $bonuses,
         'test_info' => $test_info,
-        'main_test_info' => $main_test_info
+        'main_test_info' => $main_test_info,
+        'dates' => $dates
          );
 
 
@@ -491,6 +509,7 @@ class RSController extends Controller
     public function getrandRS(Request $request)
     {
       $fio = " ";
+      $dat = array();
 
       $objUsers = new User();
       $users = $objUsers->get();
@@ -519,6 +538,7 @@ class RSController extends Controller
             if($user->id == $ran)
             {
               $fio = $user->surname." ".$user->name;
+
               setcookie("some_cookie_name", Cookie::get("some_cookie_name").$ran);
             }
           }
@@ -535,7 +555,14 @@ class RSController extends Controller
         }
 
 
-      echo $fio;
+        $dat['fio'] = $fio;
+        $dat['id'] = $ran;
+
+        return $dat;
+
+
+
+
 
     }
 
@@ -634,7 +661,10 @@ class RSController extends Controller
 
         for($i = 0; $i < $count_test; $i++)
         {
+          if(($string_test_info[0]->{'test_' . $i} * $string_test[0]->{'test_' . $i}) != 0)
+          {
             $score = $score + ($score_one / $string_test_info[0]->{'test_' . $i} * $string_test[0]->{'test_' . $i});
+          }
         }
 
         $result = $request->text;
@@ -697,6 +727,18 @@ class RSController extends Controller
 
     }
 
+    public function updateDATE(Request $request)
+    {
+
+
+        $data = array();
+
+        $data[$request->name_column] = $request->text;
+
+        DB::table('dates')->where('id_rs', $request->id_rs)->update($data);
+
+    }
+
     public function updateMAINRS(Request $request)
     {
 
@@ -722,7 +764,11 @@ class RSController extends Controller
 
         for($i = 0; $i < $count_test; $i++)
         {
+          if (($string_test_info[0]->{'test_' . $i} * $string_test[0]->{'test_' . $i}) != 0)
+          {
             $score = $score + ($score_one / $string_test_info[0]->{'test_' . $i} * $string_test[0]->{'test_' . $i});
+          }
+
         }
 
         $result = $request->text;
