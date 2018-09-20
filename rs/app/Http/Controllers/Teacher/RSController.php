@@ -506,19 +506,17 @@ class RSController extends Controller
     }
 
 
+
+
     public function getrandRS(Request $request)
     {
-      $fio = " ";
-      $dat = array();
 
+      $fio = " ";
       $objUsers = new User();
       $users = $objUsers->get();
-
       $arr = explode(",", $request->array);
-
       $ran = array_random($arr);
       $count= 0;
-
       foreach($arr as $ar)
       {
           $pos = strpos(Cookie::get("some_cookie_name"), $ar);
@@ -527,18 +525,14 @@ class RSController extends Controller
             $count++;
           }
       }
-
       $pos = strpos(Cookie::get("some_cookie_name"), $ran);
-
-
         if($pos === false)
         {
           foreach($users as $user)
           {
             if($user->id == $ran)
             {
-              $fio = $user->surname." ".$user->name;
-
+              $fio = $user->id.'/'.$user->surname." ".$user->name;
               setcookie("some_cookie_name", Cookie::get("some_cookie_name").$ran);
             }
           }
@@ -550,19 +544,27 @@ class RSController extends Controller
           }
           else {
             setcookie("some_cookie_name", "");
-            $fio = "Все студенты опрошены";
+            $fio = "/Все студенты опрошены";
           }
         }
-
-
-        $dat['fio'] = $fio;
-        $dat['id'] = $ran;
-
-        return $dat;
+      echo $fio;
 
 
 
 
+    }
+
+    public function plus(Request $request)
+    {
+
+      $objBonus = new Bonus;
+      $objBonus = $objBonus->create([
+          'count_bonus' => $request->score,
+          'date' => date("d.m.Y"),
+          'id_student' => $request->id_stud,
+          'id_rs' => $request->id_rs,
+          'info' => $request->info
+      ]);
 
     }
 
