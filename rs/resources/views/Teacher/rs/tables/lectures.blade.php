@@ -1,17 +1,16 @@
-    @section('session')
-
-    <?php setcookie("some_cookie_name", "vu");
-    ?>
-
-    @endsection
-
-    @extends('layouts.admin')
+@extends('layouts.admin')
 
     @section('content')
     <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card">
+          <p class="date">
+        <?php
+        $days = array( 1 => 'Понедельник' , 'Вторник' , 'Среда' , 'Четверг' , 'Пятница' , 'Суббота' , 'Воскресенье' );
+
+        echo $days[date( 'N' )]," ", date("d.m.Y"); ?>
+      </p>
           <div class="card-header">
 
 
@@ -30,7 +29,9 @@
 
             $countword = count($names_mass); //число работ (2)
 
+
             echo $specialty;
+
 
             echo ' ',(date('Y') - $group->year_adms), ' курс';
             echo '<br> <span class="izi">',$discipline, '</span>';
@@ -982,7 +983,195 @@
 
                   <?php
                 }
-                ?>
+                $counter = 0;
+                $array_dates_bonus = array(); //Массив дат где стоят банусные баллы !!!!!!!!!!!!!!!!!
+                $array_dates_info_bonus = array(); //Массив тем по которым отвечали студенты в каждую дату !!!!!!!!!!!!!!!
+                $array_dates_for_bonus = array(); // Массив в котором храняться количество кругов вопросов
+
+                foreach ($bonuses as $bonuse) {
+                  if (!in_array(date("d.m", strtotime($bonuse->created_at)) , $array_dates_bonus))
+                  {
+                    array_push($array_dates_bonus, date("d.m", strtotime($bonuse->created_at)));
+                  }
+                }
+
+
+                  foreach ($array_dates_bonus as $adb)
+                {
+                  if(!isset($array_dates_info_bonus[$adb]))
+                  {
+                    $array_dates_info_bonus[$adb] = array();
+                  }
+
+                  foreach ($bonuses as $bonuse)
+                  {
+                  if (date("d.m", strtotime($bonuse->created_at) == $adb))
+                  {
+
+                    if (!in_array($bonuse->info, $array_dates_info_bonus[$adb]) && $bonuse->info != null)
+                    {
+
+                      //array_push($array_dates_info_bonus, $adb => $bonuse->info);
+                      //$array_dates_info_bonus += array($adb => $bonuse->info);
+                      //$array_dates_info_bonus += [$adb => $bonuse->info];
+
+                      //array_push($data, array($category => $question);
+
+                      $array_dates_info_bonus[$adb][] = $bonuse->info;
+
+                    }
+                  }
+                }
+              }
+
+              foreach ($array_dates_bonus as $adb)
+            {
+              if(!isset($array_dates_for_bonus[$adb]))
+              {
+                $array_dates_for_bonus[$adb] = array();
+              }
+
+              foreach ($bonuses as $bonuse)
+              {
+              if (date("d.m", strtotime($bonuse->created_at) == $adb))
+              {
+
+                if ( (!in_array($bonuse->date, $array_dates_for_bonus[$adb])) && (date("d.m", strtotime($bonuse->created_at)) == $adb) )
+                {
+
+                  //array_push($array_dates_info_bonus, $adb => $bonuse->info);
+                  //$array_dates_info_bonus += array($adb => $bonuse->info);
+                  //$array_dates_info_bonus += [$adb => $bonuse->info];
+
+                  //array_push($data, array($category => $question);
+
+                  $array_dates_for_bonus[$adb][] = $bonuse->date;
+
+                }
+              }
+            }
+          }
+
+              //dd($array_dates_info_bonus);
+              //dd($array_dates_for_bonus, $array_dates_info_bonus);
+
+
+                if (!empty($bonuses))
+                {
+
+                  ?>
+
+
+                  <b-collapse style="display:none;" id="accordion202" accordion="my-accordion">
+                    <h2 class="name-table">Бонусные баллы</h2>
+                    <table class="bonus-table">
+                      <thead>
+                        <tr>
+                          <th rowspan="3">№</th>
+                          <th rowspan="3" style="width: 230px;">ФИО</th>
+                          <th rowspan="3" >Всего <br/>баллов </th>
+                          <?php
+
+                          foreach ($array_dates_bonus as $adb)
+                          {
+                            echo '<th colspan="',count($array_dates_for_bonus[$adb]),'">',$adb,'</th>';
+                          }
+
+                          ?>
+                        </tr>
+                        <tr>
+                          <?php
+                          foreach ($array_dates_bonus as $adb)
+                          {
+                          foreach ($array_dates_for_bonus[$adb] as $adfb)
+                          {
+                            foreach ($bonuses as $bonuse)
+                            {
+                              if ( ($bonuse->date == $adfb) && (date("d.m", strtotime($bonuse->created_at)) == $adb) )
+                              {
+                                $title = $bonuse->info;
+
+                              }
+                            }
+                            echo '<th title="', $title ,'">',$adfb,'</th>';
+                          }
+                        }
+
+                          ?>
+                        </tr>
+
+                      </thead>
+                      @foreach($students as $student)
+
+                      <tr>
+
+                        <td>
+                          <?php
+                          $counter++;
+                          echo $counter;
+                          ?>
+                        </td>
+
+                        <td>
+                          <?php
+                          foreach($users as $user)
+                          {
+                            if($user->id == $student->id_student)
+                            {
+                              echo $user->surname,' ',$user->name,' ',$user->patronymic;
+                            }
+                          }
+                          ?>
+                        </td>
+
+                        <td>
+                          <?php
+                          $sum_bonus =  0;
+                          foreach ($bonuses as $bonuse)
+                          {
+                            if($bonuse->id_student == $student->id_student)
+                            {
+                              $sum_bonus += $bonuse->count_bonus;
+
+                            }
+                          }
+                          echo $sum_bonus;
+                          ?>
+                        </td>
+
+                        <?php
+
+                        foreach ($array_dates_bonus as $adb)
+                        {
+                          foreach ($array_dates_for_bonus[$adb] as $adfb)
+                          {
+                            $flag = 0;
+
+                              foreach ($bonuses as $bonuse)
+                              {
+                                if ( ($bonuse->date == $adfb) && (date("d.m", strtotime($bonuse->created_at)) == $adb) && ($bonuse->id_student == $student->id_student) )
+                                {
+                                  echo '<td>',$bonuse->count_bonus,'</td>';
+                                  $flag = 1;
+
+                                }
+                            }
+                            if ($flag == 0) echo '<td></td>';
+                          }
+                        }
+
+                        ?>
+
+
+                      </tr>
+                      @endforeach
+
+
+
+                    </table>
+                  </b-collapse>
+
+              <?php  }  ?>
 
 
 
@@ -1011,16 +1200,25 @@
               <a v-on:click="namescore = 'По презентации'">По презентации</a>
               <a v-on:click="namescore = 'По практическим'">По практическим</a>
               <a v-on:click="namescore = 'По компетенциям'">По компетенциям</a>
-              <a v-on:click="namescore = 'По компетенциям'">По схемам</a>
+              <a v-on:click="namescore = 'По схемам'">По схемам</a>
             </br>
             <input id="info-bonus" style="width: 400px;" placeholder="Тема вопроса" v-model="namescore"/>
           </div>
           <div>
-            <button type="submit" class="button btn-stand"  style="margin-left:  20px;" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
+          <span class="block-rs-cookies"> <i class="fas fa-redo-alt rs_id_redo"></i><span id="cookie_rs_id">
+            <?php $str = 'rs'.$rs->id;
+            if (!isset($_COOKIE[$str]))
+            {
+              echo '0';
+            }
+            else echo $_COOKIE[$str];
+             ?></span></span>
+          <button type="submit" class="button btn-stand"  style="margin-left:  8px;" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
             <span id="oj" class="winner">Студент</span>
             <input type='hidden' id="id-stud-bonus" />
             <input id="id-rs-bonus" value="{{$rs->id}}" style="display:none;"/>
             <span id="likes_number"></span>
+
 
             <button type="submit" class="button btn-stand" onClick="plus()">Ответил</button>
             <button type="submit" class="button btn-stand minus" onClick="minus()">Не ответил</button>
@@ -1072,6 +1270,16 @@
 
     }
 
+    function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
 
 
 
@@ -1084,6 +1292,7 @@
       beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));},
       url:'{{URL::to("/getrand")}}',
       data:{
+        id_rs: $("#id-rs-bonus").val(),
         array:mass
       },
       success: function(dat){
@@ -1094,6 +1303,16 @@
         $("#oj").text(dat.substring(where+1));
 
         $("input#id-stud-bonus").val(id);
+
+        if (typeof (readCookie("rs" + $("#id-rs-bonus").val())) !== 'undefined')
+        {
+          $("#cookie_rs_id").html(readCookie("rs" + $("#id-rs-bonus").val()));
+        }
+        else {
+          $("#cookie_rs_id").html('0');
+        }
+
+
 
 
       }

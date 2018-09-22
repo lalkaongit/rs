@@ -548,6 +548,16 @@ span.range-sp {
     padding-left: 8px;
     margin-right: 8px;
 }
+.bonus-table th {
+    border: 1px solid rgba(255,255,255,0.2);
+    border-top: none;
+}
+.bonus-table th:first-child {
+    border-left: none;
+}
+.bonus-table th:last-child {
+    border-right: none;
+}
 .modal-header {
     padding: 10px;
     border-bottom: none;
@@ -595,6 +605,33 @@ body {
     width: 217px;
     padding: 10px;
     color: var(--backfont) !important;
+}
+.rs_id_redo {
+    font-size: 29px;
+    color: rgba(0,0,0,0.5);
+    display: block;
+}
+span#cookie_rs_id {
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+    display: block;
+    top: -22px;
+    position: relative;
+    font-size: 11px;
+}
+p.date {
+    text-align: right;
+    margin-right: 20px;
+    font-style: italic;
+    margin-bottom: -25px;
+}
+.block-rs-cookies {
+    width: 30px;
+    text-align: center;
+    display: inline-grid;
+    margin-left: 23px;
+    top: 4px;
+    position: relative;
 }
 
 .bonus-form input[placeholder]          {color: var(--backfont) !important;}

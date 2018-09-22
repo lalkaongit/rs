@@ -516,7 +516,10 @@ class RSController extends Controller
       $users = $objUsers->get();
       $arr = explode(",", $request->array);
       $ran = array_random($arr);
-      $count= 0;
+      $count= 1;
+      $id_rs_cookie = $request->id_rs;
+
+      $rs_value = 0;
       foreach($arr as $ar)
       {
           $pos = strpos(Cookie::get("some_cookie_name"), $ar);
@@ -538,13 +541,31 @@ class RSController extends Controller
           }
         }
         else {
-          if(count($arr) > $count)
+          if(count($arr) >= $count)
           {
             $this->getrandRS($request);
           }
           else {
-            setcookie("some_cookie_name", "");
+
             $fio = "/Все студенты опрошены";
+            setcookie("some_cookie_name", "");
+
+
+
+            if(!isset($_COOKIE["rs".$id_rs_cookie]))
+            {
+              $rs_value = 1;
+            }
+            elseif ($_COOKIE["rs".$id_rs_cookie] >= 1)
+            {
+              $rs_value = $_COOKIE["rs".$id_rs_cookie] + 1;
+            }
+
+
+              setcookie("rs".$request->id_rs, $rs_value, time() + 12 * 3600);
+
+
+
           }
         }
       echo $fio;
@@ -557,14 +578,35 @@ class RSController extends Controller
     public function plus(Request $request)
     {
 
-      $objBonus = new Bonus;
-      $objBonus = $objBonus->create([
-          'count_bonus' => $request->score,
-          'date' => date("d.m.Y"),
-          'id_student' => $request->id_stud,
-          'id_rs' => $request->id_rs,
-          'info' => $request->info
-      ]);
+
+      if(!isset($_COOKIE["rs".$request->id_rs]))
+      {
+        $objBonus = new Bonus;
+        $objBonus = $objBonus->create([
+            'count_bonus' => $request->score,
+            'date' => 0,
+            'id_student' => $request->id_stud,
+            'id_rs' => $request->id_rs,
+            'info' => $request->info
+        ]);
+      }
+      elseif ($_COOKIE["rs".$request->id_rs] >= 1)
+      {
+
+        $objBonus = new Bonus;
+        $objBonus = $objBonus->create([
+            'count_bonus' => $request->score,
+            'date' => $_COOKIE["rs".$request->id_rs],
+            'id_student' => $request->id_stud,
+            'id_rs' => $request->id_rs,
+            'info' => $request->info
+        ]);
+
+      }
+
+
+
+
 
     }
 
