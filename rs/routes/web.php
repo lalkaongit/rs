@@ -160,7 +160,7 @@ Route::group(['middleware' => ['teacher'], 'prefix' => 'teacher'], function() {
                 ->where('id', '\d+')
                 ->name('rs.labs');
 
-    Route::view('/rs/view/bonuses/{id}', 'Teacher\RSController@viewBonusesRS');
+    Route::get('/rs/view/bonuses/{id}', 'Teacher\RSController@viewBonusesRS');
 
 
 

@@ -724,5 +724,22 @@ margin-left: 1%;
   .minus:hover{
     background: rgba(255,0,0,0.3);
     box-shadow: 0 0 7px 0px rgba(0,0,0,0.5);
-
   }
+  th[data-title]:hover:after {
+  content: attr(data-title);
+  padding: 2px 8px;
+  color: var(--backfont);
+  position: absolute;
+  margin-left: -45px;
+  margin-top: -30px;
+  z-index: 20;
+  white-space: nowrap;
+  background: var(--blue);
+}
+.bonus-td:hover{
+  background: var(--blue) !important;
+}
+.save-bonus {
+    font-size: 26px;
+    color: rgba(255,255,255,0.6);
+}

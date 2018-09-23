@@ -1,4 +1,4 @@
-  {{$students}}<?php
+<?php
   $counter = 0;
   $array_dates_bonus = array(); //Массив дат где стоят банусные баллы !!!!!!!!!!!!!!!!!
   $array_dates_info_bonus = array(); //Массив тем по которым отвечали студенты в каждую дату !!!!!!!!!!!!!!!
@@ -50,7 +50,7 @@
 
   if (!empty($bonuses))
   {
-    ?>
+    ?><table>
         <thead>
           <tr>
             <th rowspan="3">№</th>
@@ -127,20 +127,26 @@
             foreach ($array_dates_for_bonus[$adb] as $adfb)
             {
               $flag = 0;
+              $countbon = 0;
 
-              foreach ($bonuses as $bonuse)
-              {
-                if ( ($bonuse->date == $adfb) && (date("d.m", strtotime($bonuse->created_at)) == $adb) && ($bonuse->id_student == $student->id_student) )
+                foreach ($bonuses as $bonuse)
                 {
-                  echo '<td>',$bonuse->count_bonus,'</td>';
-                  $flag = 1;
-                }
+                  if ( ($bonuse->date == $adfb) && (date("d.m", strtotime($bonuse->created_at)) == $adb) && ($bonuse->id_student == $student->id_student) )
+                  {
+                    $countbon += $bonuse->count_bonus;
+                    $flag = 1;
+
+
+                  }
               }
+              if ($flag > 0) echo '<td>',$countbon,'</td>';
               if ($flag == 0) echo '<td></td>';
             }
           }
           ?>
         </tr>
+
         @endforeach
+        </table>
 
   <?php  }  ?>

@@ -1081,6 +1081,7 @@
 
                   <b-collapse style="display:none;" id="accordion202" accordion="my-accordion">
                     <h2 class="name-table">Бонусные баллы</h2>
+                    <div id="bonuses-table-ajax">
                     <table id="bonuses" class="bonus-table">
                       <thead>
                         <tr>
@@ -1110,7 +1111,7 @@
 
                               }
                             }
-                            echo '<th title="', $title ,'">',$adfb,'</th>';
+                            echo '<th class="bonus-td" data-title="', $title ,'">',$adfb,'</th>';
                           }
                         }
 
@@ -1163,16 +1164,19 @@
                           foreach ($array_dates_for_bonus[$adb] as $adfb)
                           {
                             $flag = 0;
+                            $countbon = 0;
 
                               foreach ($bonuses as $bonuse)
                               {
                                 if ( ($bonuse->date == $adfb) && (date("d.m", strtotime($bonuse->created_at)) == $adb) && ($bonuse->id_student == $student->id_student) )
                                 {
-                                  echo '<td>',$bonuse->count_bonus,'</td>';
+                                  $countbon += $bonuse->count_bonus;
                                   $flag = 1;
+
 
                                 }
                             }
+                            if ($flag > 0) echo '<td>',$countbon,'</td>';
                             if ($flag == 0) echo '<td></td>';
                           }
                         }
@@ -1186,6 +1190,7 @@
 
 
                     </table>
+                  </div>
                   </b-collapse>
 
               <?php  }  ?>
@@ -1223,7 +1228,9 @@
           </div>
           <div>
           <span class="block-rs-cookies"> <i class="fas fa-redo-alt rs_id_redo"></i><span id="cookie_rs_id">
-            <?php $str = 'rs'.$rs->id;
+            <?php
+            $rs_str = 'teacher/rs/view/bonuses/'.$rs->id;
+            $str = 'rs'.$rs->id;
             if (!isset($_COOKIE[$str]))
             {
               echo '0';
@@ -1241,6 +1248,8 @@
             <button type="submit" class="button btn-stand minus" onClick="minus()">Не ответил</button>
           </div>
           <span id="suc"></span>
+
+          <span id="suca" style="display: none"><i class="far fa-save save-bonus"></i></span>
 
         </div>
 
@@ -1280,7 +1289,11 @@
         score: document.getElementById("count-bonus").value
       },
       success: function(){
-        $("#suc").html("Схоранил ;3");
+        $("#bonuses-table-ajax").load
+        ('<?php echo url($rs_str); ?>');
+
+        $("#suca").fadeIn(500);
+        $('#suca').delay(1000).fadeOut();
       }
     });
     }
@@ -1299,7 +1312,13 @@
         score: document.getElementById("count-bonus").value
       },
       success: function(){
-        $("#suc").html("Схоранил ;3");
+        $("#bonuses-table-ajax").load
+        ('<?php echo url($rs_str); ?>');
+
+        $("#suca").fadeIn(500);
+        $('#suca').delay(1000).fadeOut();
+
+
       }
     });
     }
