@@ -9,7 +9,22 @@
         <?php
         $days = array( 1 => 'Понедельник' , 'Вторник' , 'Среда' , 'Четверг' , 'Пятница' , 'Суббота' , 'Воскресенье' );
 
-        echo $days[date( 'N' )]," ", date("d.m.Y"); ?>
+        echo $days[date( 'N' )]," ", date("d.m.Y");
+
+        $countlec = $rs->number_lectures;
+        $today = date("d.m");
+        $numberdate = 0;
+
+        for ($i= 0; $i < $countlec; $i++)
+        {
+          if ($dates[0]->{'date_' . $i} == $today)
+          {
+            $numberdate = $i;
+          }
+
+        }
+
+        ?>
       </p>
           <div class="card-header">
 
@@ -452,9 +467,11 @@
               //мщу студентов которые есть в данной БРС
               $mass_stud_task = [];
 
+
+
               foreach($students as $student)
               {
-                if($student->id_rs == $rs->id){
+                if($student->id_rs == $rs->id && $student->{'date_' . $numberdate} > 0){
                   array_push($mass_stud_task,$student->id_student);
                 }
 
@@ -1064,7 +1081,7 @@
 
                   <b-collapse style="display:none;" id="accordion202" accordion="my-accordion">
                     <h2 class="name-table">Бонусные баллы</h2>
-                    <table class="bonus-table">
+                    <table id="bonuses" class="bonus-table">
                       <thead>
                         <tr>
                           <th rowspan="3">№</th>
@@ -1220,7 +1237,7 @@
             <span id="likes_number"></span>
 
 
-            <button type="submit" class="button btn-stand" onClick="plus()">Ответил</button>
+            <button id="stav" type="submit" class="button btn-stand plus" onClick="plus()">Ответил</button>
             <button type="submit" class="button btn-stand minus" onClick="minus()">Не ответил</button>
           </div>
           <span id="suc"></span>
@@ -1248,6 +1265,7 @@
 
     <script>
 
+
     function plus()
     {
 
@@ -1265,10 +1283,27 @@
         $("#suc").html("Схоранил ;3");
       }
     });
-
-
-
     }
+
+    function minus()
+    {
+
+     $.ajax({
+      type: "POST",
+      beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));},
+      url:'{{URL::to("/minus")}}',
+      data:{
+        id_rs: $("#id-rs-bonus").val(),
+        info:document.getElementById("info-bonus").value,
+        id_stud: document.getElementById("id-stud-bonus").value,
+        score: document.getElementById("count-bonus").value
+      },
+      success: function(){
+        $("#suc").html("Схоранил ;3");
+      }
+    });
+    }
+
 
     function readCookie(name) {
     var nameEQ = name + "=";

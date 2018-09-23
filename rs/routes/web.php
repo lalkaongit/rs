@@ -113,6 +113,7 @@ Route::post('/updatetmaini', ['as' => '/updatetmaini', 'uses' => 'Teacher\RSCont
 Route::post('/updatemain', ['as' => '/updatemain', 'uses' => 'Teacher\RSController@updateMAINRS'])->name('updatemain');
 Route::post('/update-date', ['as' => '/update-date', 'uses' => 'Teacher\RSController@updateDATE'])->name('update-date');
 Route::post('/plus', ['as' => '/plus', 'uses' => 'Teacher\RSController@plus'])->name('plus');
+Route::post('/minus', ['as' => '/minus', 'uses' => 'Teacher\RSController@minus'])->name('minus');
 
 
 
@@ -159,9 +160,7 @@ Route::group(['middleware' => ['teacher'], 'prefix' => 'teacher'], function() {
                 ->where('id', '\d+')
                 ->name('rs.labs');
 
-
-
-
+    Route::view('/rs/view/bonuses/{id}', 'Teacher\RSController@viewBonusesRS');
 
 
 

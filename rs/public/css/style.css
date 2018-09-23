@@ -548,6 +548,7 @@ span.range-sp {
     padding-left: 8px;
     margin-right: 8px;
 }
+
 .bonus-table th {
     border: 1px solid rgba(255,255,255,0.2);
     border-top: none;
@@ -698,13 +699,30 @@ margin-left: 1%;
   }
   tr:last-child td {
     border-bottom: none;
-   }
-   .tabs a:focus {
-     background: rgba(0,0,0,0.8) !important;
-   }
-   .tabs a:active {
-     background: rgba(0,0,0,0.8) !important;
-   }
-   tbody tr:hover {
-       background: rgba(0,0,0,0.5)!important;
-      }
+  }
+  .tabs a:focus {
+    background: rgba(0,0,0,0.8) !important;
+  }
+  .tabs a:active {
+    background: rgba(0,0,0,0.8) !important;
+  }
+  tbody tr:hover {
+    background: rgba(0,0,0,0.5)!important;
+  }
+
+  .plus{
+    background: rgba(0,255,0,0.2);
+  }
+  .minus{
+    background: rgba(255,0,0,0.3);
+  }
+  .plus:hover{
+    background: rgba(0,255,0,0.2);
+    box-shadow: 0 0 7px 0px rgba(0,0,0,0.5);
+
+  }
+  .minus:hover{
+    background: rgba(255,0,0,0.3);
+    box-shadow: 0 0 7px 0px rgba(0,0,0,0.5);
+
+  }
