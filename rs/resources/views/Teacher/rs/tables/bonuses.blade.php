@@ -50,7 +50,7 @@
 
   if (!empty($bonuses))
   {
-    ?><table>
+    ?><table id="bonuses" class="bonus-table">
         <thead>
           <tr>
             <th rowspan="3">№</th>
@@ -77,7 +77,7 @@
                     $title = $bonuse->info;
                   }
                 }
-                echo '<th title="', $title ,'">',$adfb,'</th>';
+                echo '<th class="bonus-td" data-title="', $title ,'">',$adfb,'</th>';
               }
             }
             ?>

@@ -17,11 +17,7 @@
 
         for ($i= 0; $i < $countlec; $i++)
         {
-          if ($dates[0]->{'date_' . $i} == $today)
-          {
-            $numberdate = $i;
-          }
-
+          if ($dates[0]->{'date_' . $i} == $today) $numberdate = $i;
         }
 
         ?>
@@ -1027,15 +1023,7 @@
 
                     if (!in_array($bonuse->info, $array_dates_info_bonus[$adb]) && $bonuse->info != null)
                     {
-
-                      //array_push($array_dates_info_bonus, $adb => $bonuse->info);
-                      //$array_dates_info_bonus += array($adb => $bonuse->info);
-                      //$array_dates_info_bonus += [$adb => $bonuse->info];
-
-                      //array_push($data, array($category => $question);
-
                       $array_dates_info_bonus[$adb][] = $bonuse->info;
-
                     }
                   }
                 }
@@ -1055,15 +1043,7 @@
 
                 if ( (!in_array($bonuse->date, $array_dates_for_bonus[$adb])) && (date("d.m", strtotime($bonuse->created_at)) == $adb) )
                 {
-
-                  //array_push($array_dates_info_bonus, $adb => $bonuse->info);
-                  //$array_dates_info_bonus += array($adb => $bonuse->info);
-                  //$array_dates_info_bonus += [$adb => $bonuse->info];
-
-                  //array_push($data, array($category => $question);
-
                   $array_dates_for_bonus[$adb][] = $bonuse->date;
-
                 }
               }
             }

@@ -587,65 +587,104 @@ class RSController extends Controller
     public function getrandRS(Request $request)
     {
 
-      $fio = " ";
+
+      $rs = RS::find($request->id_rs);
+      if(!$rs) {
+          return abort(404);
+      }
+
       $objUsers = new User();
       $users = $objUsers->get();
-      $arr = explode(",", $request->array);
-      $ran = array_random($arr);
-      $count= 1;
+
+      $dates = DB::select('select * from dates where id_rs = ?', [$rs->id]);
+
+      $students = DB::select('select * from lectures where id_rs = ?', [$rs->id]);
+
+      $countlec = $rs->number_lectures;
+      $today = date("d.m");
+      $numberdate = 0;
+
+      for ($i= 0; $i < $countlec; $i++)
+      {
+        if ($dates[0]->{'date_' . $i} == $today) $numberdate = $i;     //день в котором проставлена посещаемость
+      }
+
+
+
+      $mass_stud = [];
+
+      foreach($students as $student)
+      {
+        if($student->{'date_' . $numberdate} > 0){
+          array_push($mass_stud,$student->id_student);
+        }
+
+      }
+
+      $mass_stud = array_unique($mass_stud);
+
+      $fio = " ";
+
+      $ran = array_random($mass_stud);
+      $count = 0;
       $id_rs_cookie = $request->id_rs;
 
       $rs_value = 0;
       $masswas = 0; //массив присутствующих
 
-      foreach($arr as $ar)
+      if(Cookie::get("some_cookie_name") !== null)
       {
-          $pos = strpos(Cookie::get("some_cookie_name"), $ar);
-          if($pos !== false)
-          {
-            $count++;
-          }
-      }
-      $pos = strpos(Cookie::get("some_cookie_name"), $ran);
-        if($pos === false)
+        foreach($mass_stud as $ms)
         {
-          foreach($users as $user)
-          {
-            if($user->id == $ran)
+            $pos = substr_count($_COOKIE["some_cookie_name"], $ms);
+            if($pos > 0) //нашел этот элемент в куки, прибавляй один
             {
-              $fio = $user->id.'/'.$user->surname." ".$user->name;
-              setcookie("some_cookie_name", Cookie::get("some_cookie_name").$ran);
+              $count += 1;
             }
+        }
+      }
+
+
+
+      $pos = substr_count(Cookie::get("some_cookie_name"), $ran);
+
+      if(count($mass_stud) == $count)
+      {
+        $fio = "/Все студенты опрошены";
+        setcookie("some_cookie_name", " ");
+
+
+        if(!isset($_COOKIE["rs".$id_rs_cookie]))
+        {
+          $rs_value = 1;
+        }
+        elseif ($_COOKIE["rs".$id_rs_cookie] >= 1)
+        {
+          $rs_value = $_COOKIE["rs".$id_rs_cookie] + 1;
+        }
+          setcookie("rs".$request->id_rs, $rs_value, time() + 12 * 3600);
+      }
+      elseif ($pos == 0)
+      {
+        foreach($users as $user)
+        {
+          if($user->id == $ran)
+          {
+            $fio = $user->id.'/'.$user->surname." ".$user->name;
+            setcookie("some_cookie_name", Cookie::get("some_cookie_name").$ran);
           }
         }
-        else {
-          if(count($arr) >= $count)
+      }
+        elseif ($pos > 0)
+        {
+          if(count($mass_stud) >= $count)
           {
             $this->getrandRS($request);
           }
-          else {
-
-            $fio = "/Все студенты опрошены";
-            setcookie("some_cookie_name", "");
-
-
-
-            if(!isset($_COOKIE["rs".$id_rs_cookie]))
-            {
-              $rs_value = 1;
-            }
-            elseif ($_COOKIE["rs".$id_rs_cookie] >= 1)
-            {
-              $rs_value = $_COOKIE["rs".$id_rs_cookie] + 1;
-            }
-
-
-              setcookie("rs".$request->id_rs, $rs_value, time() + 12 * 3600);
-
-
-
-          }
         }
+
+
+
       echo $fio;
 
 
