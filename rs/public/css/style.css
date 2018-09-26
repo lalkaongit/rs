@@ -689,8 +689,11 @@ margin-left: 1%;
   .navbar-laravel {
     background: var(--back);
   }
-  .att td:last-child, .att tr:first-child th:last-child {
+  .att td:nth-last-child(2), .att tr:first-child th:nth-last-child(2) {
     background: rgba(0,0,0,0.5) !important;
+}
+.att td:nth-last-child(4), .att tr:first-child th:nth-last-child(4) {
+  background: rgba(0,0,0,0.5) !important;
 }
 
   th {

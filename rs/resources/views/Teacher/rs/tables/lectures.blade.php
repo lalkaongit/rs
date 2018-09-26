@@ -47,6 +47,18 @@
 
             echo $specialty;
 
+            $at_visit_max = 0;
+            $at_test_max = 0;
+            $at_main_test_max = 0;
+
+            if(!empty($tasks))
+            {
+              for ($i = 0; $i < $countword; $i++)
+              {
+                ${'at_task_max'.$i} = 0;
+              }
+            }
+
 
             echo ' ',(date('Y') - $group->year_adms), ' курс';
             echo '<br> <span class="izi">',$discipline, '</span>';
@@ -185,6 +197,7 @@
                       {
                         $summscoretests = 0;
                         $count_tests = $test_info->count_tests;
+                        $vr_max_t = 0;
 
                         foreach($tests as $test)
                         {
@@ -192,13 +205,22 @@
                           {
                             for($i = 0; $i < $count_tests; $i++)
                             {
-                              if($test_info->{'test_' . $i} !=0)
+                              if($test_info->{'test_' . $i} > 0)
                               {
+
                                 $summscoretests = $summscoretests + (($test_info->score_one / $test_info->{'test_' . $i}) * $test->{'test_' . $i});
+                                if($test->{'test_' . $i} > 0)
+                                {
+                                  $vr_max_t++;
+                                }
+
+
                               }
                             }
                           }
                         }
+                      if($at_test_max < $vr_max_t) $at_test_max = $vr_max_t;
+
                       }
 
                       if (!empty($bonuses))
@@ -220,6 +242,7 @@
                       {
 
                         $count_tests = $main_test_info->count_tests;
+                        $vr_max_tm = 0;
 
                         foreach($maintests as $maintest)
                         {
@@ -229,11 +252,13 @@
                             {
                               if($main_test_info->{'test_' . $i} !=0)
                               {
+                                $vr_max_tm++;
                                 $mainsummscoretests = round($mainsummscoretests + (($main_test_info->score_one / $main_test_info->{'test_' . $i}) * $maintest->{'test_' . $i}), 1);
                               }
                             }
                           }
                         }
+                        if($at_main_test_max < $vr_max_tm) $at_main_test_max = $vr_max_tm;
                       }
 
 
@@ -249,8 +274,10 @@
                       }
                       $sumtask = 0;
 
+
                       for ($i = 0; $i < $countword; $i++) //от 0 до количества внекласных работ типа: (Практическая + Лабораторная + Тест = 3)
                       {
+                        $vr_max_task = 0;
 
                         foreach($tasks as $task)
                         {
@@ -258,10 +285,20 @@
                           {
                             for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
                             {
+
+
+                              if($task->{'task_' . $j} > 0)
+                              {
+                                $vr_max_task++;
+                              }
                               $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
+
                             }
+                            if (${'at_task_max'.$i} < $vr_max_task) ${'at_task_max'.$i} = $vr_max_task;
+
                           }
                         }
+
 
                       }
                       ?>
@@ -272,14 +309,24 @@
                       //Столбик сумма всех баллов
 
                       $sum = 0;
+                      $vr_max_l = 0;
                       for ($i = 0; $i < $rs->number_lectures; $i++)
                       {
-                        $sum =$sum + $student->{'date_' . $i};
+                        $sum = $sum + $student->{'date_' . $i};
+
+                        if($student->{'date_' . $i} > 0)
+                        {
+                          $vr_max_l++;
+                        }
                       }
+
+                      if ($at_visit_max < $vr_max_l) $at_visit_max = $vr_max_l;
+
                       $score_one_lecture = $rs->all_points_visits / $rs->number_lectures;
 
                       echo round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1) + $sum_bonus;
                       ?>
+
                     </td>
 
                     <td>
@@ -1223,17 +1270,7 @@
               $bonus_at = 0;
 
 
-              $at_visit_max = 0;
-              $at_test_max = 0;
-              $at_main_test_max = 0;
 
-              if(!empty($tasks))
-              {
-                for ($i = 0; $i < $countword; $i++)
-                {
-                  ${'at_task_max'.$i} = 0;
-                }
-              }
 
 
               ?>
@@ -1282,6 +1319,15 @@
                       <th rowspan="2" >
                       Оценка
                       </th>
+                      <th rowspan="2" >
+                      %
+                      </th>
+                      <th data-title="Оценка по требованиям преподавателя" rowspan="2" >
+                      Оценка*
+                      </th>
+                      <th data-title="Процент по требованиям преподавателя" rowspan="2" >
+                      %*
+                      </th>
 
 
 
@@ -1303,7 +1349,6 @@
                       {
                         for ($t = 0; $t < $countword; $t++)
                         {
-
                           if($rs->at_tasks == null)
                           {
                             echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
@@ -1329,11 +1374,6 @@
                             echo $att_mass[$t];
                             echo '</th>';
                           }
-
-
-
-
-
                         }
                       }
 
@@ -1402,11 +1442,13 @@
 
                     <td>
                       <?php
+
+                      $score_one_test = 0;
                       if (!empty($test_info))
                       {
                         $summscoretests = 0;
                         $count_tests = $test_info->count_tests;
-                        $vr_max_t = 0;
+
 
                         foreach($tests as $test)
                         {
@@ -1416,13 +1458,13 @@
                             {
                               if($test_info->{'test_' . $i} !=0)
                               {
-                                $vr_max_t++;
+                                $score_one_test = $test_info->score_one;
                                 $summscoretests = $summscoretests + (($test_info->score_one / $test_info->{'test_' . $i}) * $test->{'test_' . $i});
                               }
                             }
                           }
                         }
-                      if($at_test_max < $vr_max_t) $at_test_max = $vr_max_t;
+
                       }
 
 
@@ -1436,18 +1478,18 @@
                         if($bonuse->id_student == $student->id_student)
                         {
                           $sum_bonus += $bonuse->count_bonus;
-
                         }
                       }
-
                     }
+
+                    $score_one_main_test = 0;
 
 
                       if (!empty($main_test_info))
                       {
 
                         $count_tests = $main_test_info->count_tests;
-                        $vr_max_tm = 0;
+
 
                         foreach($maintests as $maintest)
                         {
@@ -1457,13 +1499,14 @@
                             {
                               if($main_test_info->{'test_' . $i} !=0)
                               {
-                                $vr_max_tm++;
+                                $score_one_main_test = $main_test_info->score_one;
+
                                 $mainsummscoretests = round($mainsummscoretests + (($main_test_info->score_one / $main_test_info->{'test_' . $i}) * $maintest->{'test_' . $i}), 1);
                               }
                             }
                           }
                         }
-                      if($at_main_test_max < $vr_max_tm) $at_main_test_max = $vr_max_tm;
+
                       }
 
 
@@ -1478,7 +1521,6 @@
                         }
                       }
                       $sumtask = 0;
-                      $vr_max_task = 0;
 
                       for ($i = 0; $i < $countword; $i++) //от 0 до количества внекласных работ типа: (Практическая + Лабораторная + Тест = 3)
                       {
@@ -1489,14 +1531,11 @@
                           {
                             for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
                             {
-                              if($task->{'task_' . $j} > 0)
-                              {
-                                $vr_max_task++;
-                              }
                               $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
                             }
                           }
                         }
+
 
                       }
 
@@ -1508,15 +1547,28 @@
                       //Столбик сумма всех баллов
 
                       $sum = 0;
+                      $vr_max_l = 0;
                       for ($i = 0; $i < $rs->number_lectures; $i++)
                       {
-                        $sum =$sum + $student->{'date_' . $i};
+                        $sum = $sum + $student->{'date_' . $i};
+
+                        if($student->{'date_' . $i} > 0)
+                        {
+                          $vr_max_l++;
+                        }
                       }
+
+                      if ($at_visit_max < $vr_max_l) $at_visit_max = $vr_max_l;
+
                       $score_one_lecture = $rs->all_points_visits / $rs->number_lectures;
+
+                      $summall = round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1) + $sum_bonus;
 
                       echo round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1) + $sum_bonus;
                       ?>
                     </td>
+
+                    
 
                     <td>
                       <?php //Сумма баллов за посещение всех лекций
@@ -1537,6 +1589,11 @@
 
 
                     <?php //Сумма баллов за работы (Практическая, Лабораторная)
+                    for ($i = 0; $i < $countword; $i++) //от 0 до количества внекласных работ типа: (Практическая + Лабораторная + Тест = 3)
+                    {
+                      ${'score_one_task'.$i} = 0;
+                    }
+
                     if(!empty($tasks))
                     {
 
@@ -1552,6 +1609,7 @@
                           {
                             for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
                             {
+                              ${'score_one_task'.$i} = $task->score_one;
                               $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
                             }
                           }
@@ -1580,11 +1638,99 @@
 
 
 
-                    ?>
-                    <td>
-                                    
 
-                    </td>
+                    //на основе сдачи работ студентов
+
+                    $score_att_visit = $at_visit_max * $score_one_lecture;
+                    $score_att_test = $at_test_max * $score_one_test;
+                    $score_att_main_test = $at_main_test_max * $score_one_main_test;
+                    $arr_score_att_task = array();
+                    $summ_att = 0;
+
+                    $summ_att = $score_att_visit + $score_att_test + $score_att_main_test;
+
+                    if(!empty($tasks))
+                    {
+                      for ($i = 0; $i < $countword; $i++) $summ_att += (${'score_one_task'.$i} * ${'at_task_max'.$i});
+                    }
+
+                    $att_score_stud = (($summall*100)/$summ_att);
+
+                    if(empty($att_score_stud))
+                    {
+                      echo '<td> - </td>';
+                    }
+                    else {
+                      if($att_score_stud >= 85)
+                      {
+                        echo '<td>', 5, '</td>';
+                      }
+                      if($att_score_stud < 85 && $att_score_stud >= 70)
+                      {
+                        echo '<td>', 4, '</td>';
+                      }
+                      if($att_score_stud < 70 && $att_score_stud >= 55)
+                      {
+                        echo '<td>', 3, '</td>';
+                      }
+                      if($att_score_stud < 55)
+                      {
+                        echo '<td>', 2, '</td>';
+                      }
+                    }
+
+                      echo '<td>',round($att_score_stud,1), '</td>';
+
+                      //на основе вбитых данных
+
+                      $score_att_visitp = $rs->at_visit * $score_one_lecture;
+                      $score_att_testp = $rs->at_tests * $score_one_test;
+                      $score_att_main_testp = $rs->at_main_tests * $score_one_main_test;
+                      $summ_attp = 0;
+
+                      $summ_attp = $score_att_visitp + $score_att_testp + $score_att_main_testp;
+
+                      if(!empty($tasks))
+                      {
+                        for ($i = 0; $i < $countword; $i++) $summ_attp += (${'score_one_task'.$i} * $att_mass[$i]);
+                      }
+
+                      $att_score_studp = (($summall*100)/$summ_attp);
+
+                      if(empty($att_score_studp))
+                      {
+                        echo '<td> - </td>';
+                      }
+                      else {
+                        if($att_score_studp >= 85)
+                        {
+                          echo '<td>', 5, '</td>';
+                        }
+                        if($att_score_studp < 85 && $att_score_studp >= 70)
+                        {
+                          echo '<td>', 4, '</td>';
+                        }
+                        if($att_score_studp < 70 && $att_score_studp >= 55)
+                        {
+                          echo '<td>', 3, '</td>';
+                        }
+                        if($att_score_studp < 55)
+                        {
+                          echo '<td>', 2, '</td>';
+                        }
+                      }
+
+                      echo '<td>',round($att_score_studp,1), '</td>';
+
+
+
+
+
+
+                      ?>
+
+
+
 
 
 
