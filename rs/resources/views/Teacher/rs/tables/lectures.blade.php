@@ -19,7 +19,6 @@
         {
           if ($dates[0]->{'date_' . $i} == $today) $numberdate = $i;
         }
-
         ?>
       </p>
           <div class="card-header">
@@ -34,11 +33,16 @@
             $count_tasks = $rs->count_tasks;
             $score_tasks = $rs->score_tasks;
 
+            $att_tasks = $rs->at_tasks;
+
             $names_mass = explode(",",$names_tasks); //массив с названием работ типа: (Практическая, Лабораторная)
             $count_mass = explode(",",$count_tasks); //массив с количеством работ для каждой типа: Практическая: 5 шт. Лабораторная 6шт. (5,6)
             $score_mass = explode(",",$score_tasks); //массив с количеством возможных балло за сдачу всех работ (200, 150)
 
+            $att_mass = explode(",",$att_tasks); //массив со значениями для аттестации по практическим работам
+
             $countword = count($names_mass); //число работ (2)
+
 
 
             echo $specialty;
@@ -145,6 +149,12 @@
                         echo '<th>Итоговые тесты</th>';
                       }
                       ?>
+                      <?php
+                      if (!empty($bonuses))
+                      {
+                        echo '<th>Бонусные баллы</th>';
+                      }
+                      ?>
 
 
 
@@ -157,6 +167,7 @@
                   $idrowlecture = 0;
                   $mainsummscoretests = 0;
                   $summscoretests = 0;
+                  $sum_bonus =  0;
                   ?>
                   @foreach($students as $student)
                   <tr>
@@ -189,6 +200,20 @@
                           }
                         }
                       }
+
+                      if (!empty($bonuses))
+                      {
+                        $sum_bonus =  0;
+
+                      foreach ($bonuses as $bonuse)
+                      {
+                        if($bonuse->id_student == $student->id_student)
+                        {
+                          $sum_bonus += $bonuse->count_bonus;
+
+                        }
+                      }
+                    }
 
 
                       if (!empty($main_test_info))
@@ -244,6 +269,7 @@
 
                     <td>
                       <?php
+                      //Столбик сумма всех баллов
 
                       $sum = 0;
                       for ($i = 0; $i < $rs->number_lectures; $i++)
@@ -252,7 +278,7 @@
                       }
                       $score_one_lecture = $rs->all_points_visits / $rs->number_lectures;
 
-                      echo round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1);
+                      echo round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1) + $sum_bonus;
                       ?>
                     </td>
 
@@ -310,6 +336,13 @@
                     }
 
 
+                    if (!empty($bonuses))
+                    {
+                    echo '<td> ', $sum_bonus ,'</td>';
+                    }
+
+
+
                     ?>
 
 
@@ -358,7 +391,7 @@
                           echo $i;
                           echo "'";
                           echo ')" >';
-                          echo date("d.m", strtotime($first_date)),' </th>';
+                          echo '01.01 </th>';
                         }
                         else {
                           echo '<th style="cursor:text;" oncontextmenu="$(this).html(',date("d.m"),');" contenteditable onblur="update_date(';
@@ -463,8 +496,6 @@
               //мщу студентов которые есть в данной БРС
               $mass_stud_task = [];
 
-
-
               foreach($students as $student)
               {
                 if($student->id_rs == $rs->id && $student->{'date_' . $numberdate} > 0){
@@ -523,7 +554,8 @@
                           $counter = 0;
 
                           $u=0;
-                          foreach($mass_stud_task as $mass_stud_tas){
+
+                          foreach($students as $student){
                             echo '<tr>';
                             ?>
 
@@ -539,7 +571,7 @@
                             {
 
 
-                              if($user->id == $mass_stud_tas)
+                              if($user->id == $student->id_student)
                               {
                                 echo '<td>', $user->surname,' ',$user->name,' ',$user->patronymic, '</td>';
                                 $id_stud = $user->id;
@@ -1056,6 +1088,8 @@
                 if (!empty($bonuses))
                 {
 
+
+
                   ?>
 
 
@@ -1173,7 +1207,394 @@
                   </div>
                   </b-collapse>
 
-              <?php  }  ?>
+              <?php  }
+
+              $visit_at = 0;
+              if(!empty($tasks))
+              {
+                for ($i = 0; $i < $countword; $i++)
+                {
+                    ${'tasks_at'.$i} = 0;
+
+                }
+              }
+              $test_at = 0;
+              $main_test = 0;
+              $bonus_at = 0;
+
+
+              $at_visit_max = 0;
+              $at_test_max = 0;
+              $at_main_test_max = 0;
+
+              if(!empty($tasks))
+              {
+                for ($i = 0; $i < $countword; $i++)
+                {
+                  ${'at_task_max'.$i} = 0;
+                }
+              }
+
+
+              ?>
+
+              <b-collapse style="display:none;" id="accordion100" accordion="my-accordion">
+                <h2 class="name-table">Аттестация</h2>
+                  <table class="att">
+                  <thead>
+                    <tr>
+                      <th rowspan="2" >№</th>
+                      <th rowspan="2" rowspan="3" width="230">ФИО</th>
+                      <th rowspan="2" >Всего <br/>баллов </th>
+                      <th>Посещаемость</th>
+
+                      <?php
+                      if(!empty($tasks))
+                      {
+                        for ($i = 0; $i < $countword; $i++)
+                        {
+                          echo '<th >', $names_mass[$i],'</th>';
+                          $task_name = $names_mass[$i];
+
+                        }
+                      }
+                      ?>
+
+
+                      <?php
+                      if (!empty($test_info))
+                      {
+                        echo '<th>Тесты</th>';
+                      }
+                      ?>
+                      <?php
+                      if (!empty($main_test_info))
+                      {
+                        echo '<th>Итоговые тесты</th>';
+                      }
+                      ?>
+                      <?php
+                      if (!empty($bonuses))
+                      {
+                        echo '<th>Бонусные баллы</th>';
+                      }
+                      ?>
+                      <th rowspan="2" >
+                      Оценка
+                      </th>
+
+
+
+                    </tr>
+                    <tr class="with-data-title">
+
+                      <?php
+                      echo '<th class="number_t" style="cursor:text;" data-title="Сколько пар нужно было посетить" contenteditable onblur="update_att(';
+                      echo $rs->id;
+                      echo ',';
+                      echo "'at_visit'";
+                      echo ', $(this).text()';
+                      echo ')"';
+                      echo ">";
+                      echo $rs->at_visit;
+                      echo '</th>';
+
+                      if(!empty($tasks))
+                      {
+                        for ($t = 0; $t < $countword; $t++)
+                        {
+
+                          if($rs->at_tasks == null)
+                          {
+                            echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                            echo $rs->id;
+                            echo ',';
+                            echo "'at_tasks";
+                            echo $t, "'";
+                            echo ', $(this).text()';
+                            echo ')"';
+                            echo ">";
+                            echo '</th>';
+
+                          }
+                          else {
+                            echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                            echo $rs->id;
+                            echo ',';
+                            echo "'at_tasks";
+                            echo $t, "'";
+                            echo ', $(this).text()';
+                            echo ')"';
+                            echo ">";
+                            echo $att_mass[$t];
+                            echo '</th>';
+                          }
+
+
+
+
+
+                        }
+                      }
+
+                      if (!empty($test_info))
+                      {
+                        echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                        echo $rs->id;
+                        echo ',';
+                        echo "'at_tests'";
+                        echo ', $(this).text()';
+                        echo ')"';
+                        echo ">";
+                        echo $rs->at_tests;
+                        echo '</th>';
+                      }
+
+                      if (!empty($main_test_info))
+                      {
+                        echo '<th class="number_t" style="cursor:text;" data-title="Сколько итоговых тестов должно быть сдано" contenteditable onblur="update_att(';
+                        echo $rs->id;
+                        echo ',';
+                        echo "'at_main_tests'";
+                        echo ', $(this).text()';
+                        echo ')"';
+                        echo ">";
+                        echo $rs->at_main_tests;
+                        echo '</th>';
+                      }
+
+                      if (!empty($bonuses))
+                      {
+                        echo '<th class="number_t" style="cursor:text;" data-title="Сколько бонусных должно быть заработано" contenteditable onblur="update_att(';
+                        echo $rs->id;
+                        echo ',';
+                        echo "'at_bonuses'";
+                        echo ', $(this).text()';
+                        echo ')"';
+                        echo ">";
+                        echo $rs->at_bonuses;
+                        echo '</th>';
+                      }
+                      ?>
+
+
+                    </tr>
+                  </thead>
+                  <?php
+                  $id_lecture_mass = array();
+                  $id_student_mass = array();
+                  $counter = 0;
+                  $idrowlecture = 0;
+                  $mainsummscoretests = 0;
+                  $summscoretests = 0;
+
+
+                  ?>
+                  @foreach($students as $student)
+                  <tr>
+
+                    <td>
+                      <?php
+                      $counter++;
+                      echo $counter;
+                      ?>
+                    </td>
+
+                    <td>
+                      <?php
+                      if (!empty($test_info))
+                      {
+                        $summscoretests = 0;
+                        $count_tests = $test_info->count_tests;
+                        $vr_max_t = 0;
+
+                        foreach($tests as $test)
+                        {
+                          if($test->id_student == $student->id_student)
+                          {
+                            for($i = 0; $i < $count_tests; $i++)
+                            {
+                              if($test_info->{'test_' . $i} !=0)
+                              {
+                                $vr_max_t++;
+                                $summscoretests = $summscoretests + (($test_info->score_one / $test_info->{'test_' . $i}) * $test->{'test_' . $i});
+                              }
+                            }
+                          }
+                        }
+                      if($at_test_max < $vr_max_t) $at_test_max = $vr_max_t;
+                      }
+
+
+
+                      if (!empty($bonuses))
+                      {
+
+                      $sum_bonus =  0;
+                      foreach ($bonuses as $bonuse)
+                      {
+                        if($bonuse->id_student == $student->id_student)
+                        {
+                          $sum_bonus += $bonuse->count_bonus;
+
+                        }
+                      }
+
+                    }
+
+
+                      if (!empty($main_test_info))
+                      {
+
+                        $count_tests = $main_test_info->count_tests;
+                        $vr_max_tm = 0;
+
+                        foreach($maintests as $maintest)
+                        {
+                          if($maintest->id_student == $student->id_student)
+                          {
+                            for($i = 0; $i < $count_tests; $i++)
+                            {
+                              if($main_test_info->{'test_' . $i} !=0)
+                              {
+                                $vr_max_tm++;
+                                $mainsummscoretests = round($mainsummscoretests + (($main_test_info->score_one / $main_test_info->{'test_' . $i}) * $maintest->{'test_' . $i}), 1);
+                              }
+                            }
+                          }
+                        }
+                      if($at_main_test_max < $vr_max_tm) $at_main_test_max = $vr_max_tm;
+                      }
+
+
+                      $sumfromwork = 0;
+                      foreach($users as $user)
+                      {
+                        if($user->id == $student->id_student)
+                        {
+                          echo $user->surname,' ',$user->name,' ',$user->patronymic;
+                          array_push($id_student_mass, $user->id); // id студентов
+                          $idstudentnow = $user->id;
+                        }
+                      }
+                      $sumtask = 0;
+                      $vr_max_task = 0;
+
+                      for ($i = 0; $i < $countword; $i++) //от 0 до количества внекласных работ типа: (Практическая + Лабораторная + Тест = 3)
+                      {
+
+                        foreach($tasks as $task)
+                        {
+                          if($task->id_student == $student->id_student && $task->name_task == $names_mass[$i])
+                          {
+                            for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
+                            {
+                              if($task->{'task_' . $j} > 0)
+                              {
+                                $vr_max_task++;
+                              }
+                              $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
+                            }
+                          }
+                        }
+
+                      }
+
+                      ?>
+                    </td>
+
+                    <td>
+                      <?php
+                      //Столбик сумма всех баллов
+
+                      $sum = 0;
+                      for ($i = 0; $i < $rs->number_lectures; $i++)
+                      {
+                        $sum =$sum + $student->{'date_' . $i};
+                      }
+                      $score_one_lecture = $rs->all_points_visits / $rs->number_lectures;
+
+                      echo round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1) + $sum_bonus;
+                      ?>
+                    </td>
+
+                    <td>
+                      <?php //Сумма баллов за посещение всех лекций
+
+                      $sum = 0;
+                      for ($p = 0; $p < $rs->number_lectures; $p++)
+                      {
+                        $sum =$sum + $student->{'date_' . $p};
+                      }
+                      $score_one_lecture = $rs->all_points_visits / $rs->number_lectures;
+
+                      echo round($sum * $score_one_lecture, 1);
+
+                      ?>
+
+
+                    </td>
+
+
+                    <?php //Сумма баллов за работы (Практическая, Лабораторная)
+                    if(!empty($tasks))
+                    {
+
+                      for ($i = 0; $i < $countword; $i++) //от 0 до количества внекласных работ типа: (Практическая + Лабораторная + Тест = 3)
+                      {
+
+
+
+                        $sumtask = 0;
+                        foreach($tasks as $task)
+                        {
+                          if($task->id_student == $student->id_student && $task->id_rs == $rs->id && $task->name_task == $names_mass[$i])
+                          {
+                            for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
+                            {
+                              $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
+                            }
+                          }
+                        }
+
+                        echo '<td> ',round($sumtask, 1),'</td>';
+                      }
+                    }
+
+
+                    if (!empty($test_info))
+                    {
+                      echo '<td> ',round($summscoretests, 1), '</td>';
+                    }
+
+                    if (!empty($main_test_info))
+                    {
+                      echo '<td> ',round($mainsummscoretests, 1), '</td>';
+                    }
+
+
+                    if (!empty($bonuses))
+                    {
+                    echo '<td> ', $sum_bonus ,'</td>';
+                    }
+
+
+
+                    ?>
+                    <td>
+                                    
+
+                    </td>
+
+
+
+                  </tr>
+
+                  @endforeach
+                </table>
+
+
+              </b-collapse>
 
 
 
@@ -1320,6 +1741,8 @@
     function getrand(mass)
     {
     console.log(mass);
+    console.log(readCookie("rs" + $("#id-rs-bonus").val()));
+
 
     $.ajax({
       type: "POST",
@@ -1341,15 +1764,13 @@
         if (typeof (readCookie("rs" + $("#id-rs-bonus").val())) !== 'undefined')
         {
           $("#cookie_rs_id").html(readCookie("rs" + $("#id-rs-bonus").val()));
+          if( readCookie("rs" + $("#id-rs-bonus").val()) == null )
+          {
+            $("#cookie_rs_id").html("0");
+          }
         }
-        else {
-          $("#cookie_rs_id").html('0');
-        }
-
-
-
-
       }
+
 });
     }
     </script>
@@ -1364,13 +1785,8 @@
       item: 0,
       score: "",
       namescore: ""
-    },
-    methods: {
-      active(){
-        this.isActive = !this.isActive;
-
-      }
     }
+
     })
     </script>
 
@@ -1503,6 +1919,26 @@
 
 
     }
+
+    function update_att(id_rs, name_column, text)
+    {
+
+    var st = text.replace(",",".");
+    console.log(name_column);
+    $.ajax({
+      type: "POST",
+      url:'{{URL::to("/update-att")}}',
+      data:{
+        text:st,
+        name_column:name_column,
+        id_rs: id_rs,
+        _token: $('#signup-token').val()
+      },
+    });
+
+    }
+
+
 
     function update_date(id_rs, text, name_column)
     {

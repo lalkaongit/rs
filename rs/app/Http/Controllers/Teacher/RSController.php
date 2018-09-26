@@ -587,7 +587,6 @@ class RSController extends Controller
     public function getrandRS(Request $request)
     {
 
-
       $rs = RS::find($request->id_rs);
       if(!$rs) {
           return abort(404);
@@ -603,13 +602,12 @@ class RSController extends Controller
       $countlec = $rs->number_lectures;
       $today = date("d.m");
       $numberdate = 0;
+      $flagdate = 0;
 
       for ($i= 0; $i < $countlec; $i++)
       {
-        if ($dates[0]->{'date_' . $i} == $today) $numberdate = $i;     //день в котором проставлена посещаемость
+        if ($dates[0]->{'date_' . $i} == $today) { $numberdate = $i; $flagdate = 1; }  //день в котором проставлена посещаемость
       }
-
-
 
       $mass_stud = [];
 
@@ -620,6 +618,7 @@ class RSController extends Controller
         }
 
       }
+
 
       $mass_stud = array_unique($mass_stud);
 
@@ -647,41 +646,48 @@ class RSController extends Controller
 
 
       $pos = substr_count(Cookie::get("some_cookie_name"), $ran);
-
-      if(count($mass_stud) == $count)
+      if ($flagdate == 0)
       {
-        $fio = "/Все студенты опрошены";
-        setcookie("some_cookie_name", " ");
-
-
-        if(!isset($_COOKIE["rs".$id_rs_cookie]))
-        {
-          $rs_value = 1;
-        }
-        elseif ($_COOKIE["rs".$id_rs_cookie] >= 1)
-        {
-          $rs_value = $_COOKIE["rs".$id_rs_cookie] + 1;
-        }
-          setcookie("rs".$request->id_rs, $rs_value, time() + 12 * 3600);
+        $fio = "/Проставьте сначала дату ";
       }
-      elseif ($pos == 0)
-      {
-        foreach($users as $user)
+      else {
+        if(count($mass_stud) == $count)
         {
-          if($user->id == $ran)
+          $fio = "/Все студенты опрошены";
+          setcookie("some_cookie_name", " ");
+
+
+          if(!isset($_COOKIE["rs".$id_rs_cookie]))
           {
-            $fio = $user->id.'/'.$user->surname." ".$user->name;
-            setcookie("some_cookie_name", Cookie::get("some_cookie_name").$ran);
+            $rs_value = 1;
+          }
+          elseif ($_COOKIE["rs".$id_rs_cookie] >= 1)
+          {
+            $rs_value = $_COOKIE["rs".$id_rs_cookie] + 1;
+          }
+            setcookie("rs".$request->id_rs, $rs_value, time() + 4 * 3600);
+        }
+        elseif ($pos == 0)
+        {
+          foreach($users as $user)
+          {
+            if($user->id == $ran)
+            {
+              $fio = $user->id.'/'.$user->surname." ".$user->name;
+              setcookie("some_cookie_name", Cookie::get("some_cookie_name").$ran);
+            }
           }
         }
-      }
-        elseif ($pos > 0)
-        {
-          if(count($mass_stud) >= $count)
+          elseif ($pos > 0)
           {
-            $this->getrandRS($request);
+            if(count($mass_stud) >= $count)
+            {
+              $this->getrandRS($request);
+            }
           }
-        }
+      }
+
+
 
 
 
@@ -906,6 +912,60 @@ class RSController extends Controller
         $data[$request->name_column] = $request->text;
 
         DB::table('test_info')->where('id', $request->id)->update($data);
+
+    }
+
+    public function updateATT(Request $request)
+    {
+
+      $data = array();
+      $att_mass = array();
+
+      $rs = DB::select('select * from rs where id = ?', [$request->id_rs]);
+
+      $counttasks = $rs[0]->count_tasks;
+      $counttasks_mass = explode(",", $counttasks);
+
+      $fortasks = count($counttasks_mass);
+
+
+
+
+
+        if (substr($request->name_column,0,-1)  == "at_tasks" )
+        {
+          $namecol = substr($request->name_column,0,-1);
+          $idtask = substr($request->name_column, -1);
+
+          if($rs[0]->at_tasks == null)
+          {
+            for($i = 0; $i < $fortasks; $i++)
+            {
+              array_push($att_mass, 0);
+            }
+
+            $att_mass[$idtask] = $request->text;
+
+            $str_task = implode(",", $att_mass);
+
+            $data[$namecol] = $str_task;
+          }
+          else {
+            $att_mass = explode(",",$rs[0]->at_tasks); //массив со значениями для аттестации по практическим работам
+
+            $att_mass[$idtask] = $request->text;
+
+            $str_task = implode(",", $att_mass);
+
+            $data[$namecol] = $str_task;
+          }
+
+        }
+      else {
+        $data[$request->name_column] = $request->text;
+      }
+
+      DB::table('rs')->where('id', $request->id_rs)->update($data);
 
     }
 

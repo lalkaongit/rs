@@ -594,6 +594,7 @@ body {
     background: #43cea2;
     background: -webkit-linear-gradient(to right, #185a9d, #43cea2);
     background: linear-gradient(to right, #185a9d, #43cea2);
+    background: #273953;
     color: #fff;
 }
 .bonus-form input {
@@ -686,8 +687,12 @@ margin-left: 1%;
     border-top: 1px solid rgba(255,255,255,0.2);
 }
   .navbar-laravel {
-    background: var(--maingrey);
+    background: var(--back);
   }
+  .att td:last-child, .att tr:first-child th:last-child {
+    background: rgba(0,0,0,0.5) !important;
+}
+
   th {
     background: rgba(0,0,0,0.4)!important;
   }
@@ -735,6 +740,19 @@ margin-left: 1%;
   z-index: 20;
   white-space: nowrap;
   background: var(--blue);
+}
+.with-data-title th:hover{
+  background: var(--blue) !important;
+}
+
+.with-data-title th[data-title]:hover:after {
+content: attr(data-title);
+padding: 2px 8px;
+color: var(--backfont);
+position: absolute;
+z-index: 20;
+white-space: nowrap;
+background: var(--pink);
 }
 .bonus-td:hover{
   background: var(--blue) !important;

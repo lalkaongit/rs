@@ -17,7 +17,7 @@ class CreateBonusTable extends Migration
             $table->increments('id');
             $table->integer('id_student')->nullable();
             $table->integer('id_rs')->nullable();
-            $table->date('date')->nullable();
+            $table->integer('date')->nullable();
             $table->integer('count_bonus')->nullable();
             $table->string('info')->nullable();
             $table->timestamps();
