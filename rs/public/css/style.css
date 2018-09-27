@@ -284,6 +284,7 @@ table {
     border-radius: 9px;
     margin: 4px;
     background: rgba(0,0,0,0.3);
+        position: sticky;
 }
 td:nth-child(2) {
     border-right: none !important;
@@ -763,4 +764,23 @@ background: var(--pink);
 .save-bonus {
     font-size: 26px;
     color: rgba(255,255,255,0.6);
+}
+.all_accord table {
+    position: absolute;
+}
+table#zapolnitel {
+    background: transparent;
+    border: transparent;
+    color: transparent;
+    z-index: 0000;
+    box-shadow: none;
+    display: block;
+}
+#zapolnitel td {
+    border: none !important;
+    color: transparent !important;
+    padding: 12px 0 !important;
+}
+#zapolnitel tr {
+    border: none !important;
 }

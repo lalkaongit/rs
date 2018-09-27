@@ -127,6 +127,10 @@ Route::get('/clear', function() {
     return "Кэш очищен.";
 });
 
+Route::get('/rs/view/lectures/{id}', 'Teacher\RSController@viewLecturesRS')
+            ->where('id', '\d+')
+            ->name('rs.lectures');
+
 
 
 Route::group(['middleware' => ['teacher'], 'prefix' => 'teacher'], function() {
@@ -162,6 +166,8 @@ Route::group(['middleware' => ['teacher'], 'prefix' => 'teacher'], function() {
                 ->name('rs.labs');
 
     Route::get('/rs/view/bonuses/{id}', 'Teacher\RSController@viewBonusesRS');
+
+    Route::get('/rs/view/att/{id}', 'Teacher\RSController@viewATTRS');
 
 
 

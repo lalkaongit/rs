@@ -5,6 +5,9 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card">
+
+
+
           <p class="date">
         <?php
         $days = array( 1 => 'Понедельник' , 'Вторник' , 'Среда' , 'Четверг' , 'Пятница' , 'Суббота' , 'Воскресенье' );
@@ -32,6 +35,7 @@
             $names_tasks = $rs->names_tasks; // строка с именами работ
             $count_tasks = $rs->count_tasks;
             $score_tasks = $rs->score_tasks;
+            $counter = 0;
 
             $att_tasks = $rs->at_tasks;
 
@@ -122,8 +126,21 @@
           </div>
 
           <input type="hidden" id="signup-token" name="_token" value="{{csrf_token()}}">
-
+          <div class="all_accord">
           <div>
+            <table id="zapolnitel">
+              @foreach($students as $student)
+            <tr>
+
+              <td>
+                <?php
+                $counter++;
+                echo $counter;
+                ?>
+              </td>
+              @endforeach
+            </table>
+
             <div class="raz">
 
               <b-collapse id="accordion99" visible accordion="my-accordion">
@@ -1277,7 +1294,8 @@
 
               <b-collapse style="display:none;" id="accordion100" accordion="my-accordion">
                 <h2 class="name-table">Аттестация</h2>
-                  <table class="att">
+                <div id="att-table-ajax">
+                  <table id="att" class="att">
                   <thead>
                     <tr>
                       <th rowspan="2" >№</th>
@@ -1568,7 +1586,7 @@
                       ?>
                     </td>
 
-                    
+
 
                     <td>
                       <?php //Сумма баллов за посещение всех лекций
@@ -1722,22 +1740,12 @@
 
                       echo '<td>',round($att_score_studp,1), '</td>';
 
-
-
-
-
-
                       ?>
-
-
-
-
-
-
                   </tr>
 
                   @endforeach
                 </table>
+              </div>
 
 
               </b-collapse>
@@ -1747,29 +1755,30 @@
 
               </div>
             </div>
+            </div>
 
 
 
 
 
-            <div class="bonus-form">
+            <div id="bonus-form" class="bonus-form">
               <p>Проставлялка бонусных баллов</p>
 
               <div style="margin-left:  20px;">
-                <a v-on:click="score = '5'">5</a>
-                <a v-on:click="score = '10'">10</a>
-                <a v-on:click="score = '15'">15</a>
-                <a v-on:click="score = '20'">20</a>
-                <a v-on:click="score = '25'">25</a>
-                <a v-on:click="score = '30'">30</a>
+                <a class="animated zoomIn" v-on:click="score = '5'">5</a>
+                <a class="animated zoomIn" style="animation-delay: 0.1s;" v-on:click="score = '10'">10</a>
+                <a class="animated zoomIn" style="animation-delay: 0.2s;" v-on:click="score = '15'">15</a>
+                <a class="animated zoomIn" style="animation-delay: 0.3s;" v-on:click="score = '20'">20</a>
+                <a class="animated zoomIn" style="animation-delay: 0.4s;" v-on:click="score = '25'">25</a>
+                <a class="animated zoomIn" style="animation-delay: 0.5s;" v-on:click="score = '30'">30</a>
               </br>
               <input id="count-bonus" placeholder="Количество баллов" v-model="score"/>
             </div>
             <div>
-              <a v-on:click="namescore = 'По презентации'">По презентации</a>
-              <a v-on:click="namescore = 'По практическим'">По практическим</a>
-              <a v-on:click="namescore = 'По компетенциям'">По компетенциям</a>
-              <a v-on:click="namescore = 'По схемам'">По схемам</a>
+              <a class="animated zoomIn" v-on:click="namescore = 'По презентации'">По презентации</a>
+              <a class="animated zoomIn" style="animation-delay: 0.1s;" v-on:click="namescore = 'По практическим'">По практическим</a>
+              <a class="animated zoomIn" style="animation-delay: 0.2s;" v-on:click="namescore = 'По компетенциям'">По компетенциям</a>
+              <a class="animated zoomIn" style="animation-delay: 0.3s;" v-on:click="namescore = 'По схемам'">По схемам</a>
             </br>
             <input id="info-bonus" style="width: 400px;" placeholder="Тема вопроса" v-model="namescore"/>
           </div>
@@ -1777,6 +1786,7 @@
           <span class="block-rs-cookies"> <i class="fas fa-redo-alt rs_id_redo"></i><span id="cookie_rs_id">
             <?php
             $rs_str = 'teacher/rs/view/bonuses/'.$rs->id;
+            $rs_str_att = 'teacher/rs/view/att/'.$rs->id;
             $str = 'rs'.$rs->id;
             if (!isset($_COOKIE[$str]))
             {
@@ -2079,7 +2089,12 @@
         name_column:name_column,
         id_rs: id_rs,
         _token: $('#signup-token').val()
-      },
+      }
+      ,
+      success: function(){
+        $("#att-table-ajax").load
+        ('<?php echo url($rs_str_att); ?>');
+      }
     });
 
     }
@@ -2150,7 +2165,14 @@
     $(".my-div").on("contextmenu",function(){
       return false;
     });
+
+    var padblock = $('#zapolnitel').height();
+    $('#bonus-form').css("margin-top", padblock);
+
     });
+
+
+
     </script>
 
 

@@ -546,6 +546,81 @@ class RSController extends Controller
         return view('teacher.rs.tables.bonuses', $data);
     }
 
+    public function viewATTRS(int $id)
+    {
+        //В реквест мне приходит id БРС
+
+        //Ищу такую БРС, проверяю наличие
+        $rs = RS::find($id);
+        if(!$rs) {
+            return abort(404);
+        }
+        $test_info = DB::select('select * from test_info where id_rs = ?', [$rs->id]);
+
+        $main_test_info = DB::select('select * from main_test_info where id_rs = ?', [$rs->id]);
+
+        $students = DB::select('select * from lectures where id_rs = ?', [$rs->id]);
+
+        $tasks = DB::select('select * from tasks where id_rs = ?', [$rs->id]);
+
+        $tests = DB::select('select * from tests where id_rs = ?', [$rs->id]);
+
+        $maintests = DB::select('select * from main_test where id_rs = ?', [$rs->id]);
+
+        $bonuses = DB::select('select * from bonus where id_rs = ?', [$rs->id]);
+
+        $discipline = DB::select('select * from disciplines where id = ?', [$rs->id_discipline]);
+
+        $discipline = $discipline[0]->name;
+
+        $group = DB::select('select * from groups where id = ?', [$rs->id_group]);
+
+        $specialty = DB::select('select * from specialties where id = ?', [$group[0]->id_specialty]);
+
+        $dates = DB::select('select * from dates where id_rs = ?', [$rs->id]);
+
+        $specialty = $specialty[0]->name;
+
+        $group = $group[0];
+
+        if (!empty($test_info))
+        {
+          $test_info = $test_info[0];
+        }
+
+        if (!empty($main_test_info))
+        {
+          $main_test_info = $main_test_info[0];
+        }
+
+
+
+        $objUsers = new User();
+        $users = $objUsers->get();
+
+        $data =
+
+        array(
+        'rs' => $rs,
+        'students' => $students,
+        'users' => $users,
+        'discipline' => $discipline,
+        'specialty' => $specialty,
+        'group' => $group,
+        'tasks' => $tasks,
+        'tests' => $tests,
+        'maintests' => $maintests,
+        'bonuses' => $bonuses,
+        'test_info' => $test_info,
+        'main_test_info' => $main_test_info,
+        'dates' => $dates
+         );
+
+
+
+        return view('teacher.rs.tables.attestation', $data);
+    }
+
 
 
     public function updateLecturesRS(Request $request)
