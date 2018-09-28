@@ -13,6 +13,7 @@ use App\MainTestInfo;
 use App\Task;
 use App\Dates;
 use App\Bonus;
+use App\BonuseInfo;
 use App\Report;
 use App\Practical;
 use App\Institution;
@@ -186,6 +187,12 @@ class RSController extends Controller
             'id_rs' => $ta_rs
 
         ]);
+
+        $objBonuseInfo = new BonuseInfo;
+        $objBonuseInfo = $objBonuseInfo->create([
+            'id_teacher' => $id_teacher
+        ]);
+
 
 
         $objUsers = new User();
@@ -428,6 +435,10 @@ class RSController extends Controller
 
         $dates = DB::select('select * from dates where id_rs = ?', [$rs->id]);
 
+        $idteacher = $rs->id_teacher;
+
+        $bonuse_info = DB::select('select * from bonuse_info where id_teacher = ?', [$idteacher]);
+
         $specialty = $specialty[0]->name;
 
         $group = $group[0];
@@ -462,7 +473,8 @@ class RSController extends Controller
         'bonuses' => $bonuses,
         'test_info' => $test_info,
         'main_test_info' => $main_test_info,
-        'dates' => $dates
+        'dates' => $dates,
+        'bonuse_info' => $bonuse_info
          );
 
 
@@ -620,6 +632,34 @@ class RSController extends Controller
 
         return view('teacher.rs.tables.attestation', $data);
     }
+
+    public function viewBF(int $id)
+    {
+      //В реквест мне приходит id БРС
+
+      //Ищу такую БРС, проверяю наличие
+      $rs = RS::find($id);
+      if(!$rs) {
+          return abort(404);
+      }
+
+      $idteacher = $rs->id_teacher;
+
+      $bonuse_info = DB::select('select * from bonuse_info where id_teacher = ?', [$idteacher]);
+
+
+      $data =
+
+      array(
+      'rs' => $rs,
+      'bonuse_info' => $bonuse_info
+       );
+
+
+
+        return view('teacher.rs.tables.bonuse-form', $data);
+    }
+
 
 
 
@@ -936,15 +976,10 @@ class RSController extends Controller
         $sum = '-';
         $countquest = $string_test_info[0]->{'test_' . $j};
 
-
-
         if(($result != 0) && ($countquest != 0))
         {
           $scorefortest = ($result / $countquest)  * 100;
         }
-
-
-
 
         if(empty($result))
         {
@@ -969,7 +1004,6 @@ class RSController extends Controller
           }
         }
 
-
         $dat['score'] = round($score, 1);
         $dat['value'] = $sum;
         $dat['str'] = $request->str;
@@ -989,6 +1023,60 @@ class RSController extends Controller
         DB::table('test_info')->where('id', $request->id)->update($data);
 
     }
+
+    public function saveVAL(Request $request)
+    {
+        $rs = DB::select('select * from rs where id = ?', [$request->id_rs]);
+
+        $idteacher = $rs[0]->id_teacher;
+
+        $bonuses = DB::select('select * from bonuse_info where id_teacher = ?', [$idteacher]);
+
+        $values = array();
+
+        $values = explode(',', $bonuses[0]->values);
+
+        array_push($values, $request->value);
+
+        sort($values);
+
+        $values = implode(',', $values);
+
+        $data = array();
+
+        $data['values'] = $values;
+
+        DB::table('bonuse_info')->where('id_teacher', $idteacher)->update($data);
+
+    }
+
+    public function saveTHM(Request $request)
+    {
+        $rs = DB::select('select * from rs where id = ?', [$request->id_rs]);
+
+        $idteacher = $rs[0]->id_teacher;
+
+        $bonuses = DB::select('select * from bonuse_info where id_teacher = ?', [$idteacher]);
+
+        $themes = array();
+
+        $themes = explode(',', $bonuses[0]->themes);
+
+        array_push($themes, $request->value);
+
+        sort($themes);
+
+        $themes = implode(',', $themes);
+
+        $data = array();
+
+        $data['themes'] = $themes;
+
+        DB::table('bonuse_info')->where('id_teacher', $idteacher)->update($data);
+
+    }
+
+
 
     public function updateATT(Request $request)
     {

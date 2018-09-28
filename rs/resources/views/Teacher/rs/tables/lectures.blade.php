@@ -79,9 +79,9 @@
             @endif
             <div class="tabs">
 
-              <a v-b-toggle.accordion99 onClick="window.location.reload()">Успеваемость</a>
-              <a v-b-toggle.accordion0 >Посещаемость</a>
-              <a v-b-toggle.accordion100 >Аттестация</a>
+              <a class="animated bounce click" style="animation-delay: 0.1s;" v-b-toggle.accordion99 onClick="window.location.reload()">Успеваемость</a>
+              <a class="animated bounce" style="animation-delay: 0.2s;" v-b-toggle.accordion0 >Посещаемость</a>
+              <a class="animated bounce" style="animation-delay: 0.3s;" v-b-toggle.accordion100 >Аттестация</a>
             </br>
 
             <?php
@@ -128,19 +128,6 @@
           <input type="hidden" id="signup-token" name="_token" value="{{csrf_token()}}">
           <div class="all_accord">
           <div>
-            <table id="zapolnitel">
-              @foreach($students as $student)
-            <tr>
-
-              <td>
-                <?php
-                $counter++;
-                echo $counter;
-                ?>
-              </td>
-              @endforeach
-            </table>
-
             <div class="raz">
 
               <b-collapse id="accordion99" visible accordion="my-accordion">
@@ -606,7 +593,7 @@
                               <?php
                               for ($j = 0; $j < $count_mass[$i]; $j++)
                               {
-                                echo '<th >', $names_mass[$i] ,' №', $j+1, ' </th>';
+                                echo '<th >', $names_mass[$i] ,' №', $j+1, ' (%) </th>';
                                 echo '<th class="none">Оценка </th>';
                                 $task_name = $names_mass[$i];
                               }
@@ -1189,7 +1176,7 @@
 
                               }
                             }
-                            echo '<th class="bonus-td" data-title="', $title ,'">',$adfb,'</th>';
+                            echo '<th class="bonus-td" v-b-tooltip.hover title="', $title ,'">',$adfb,'</th>';
                           }
                         }
 
@@ -1295,12 +1282,18 @@
               <b-collapse style="display:none;" id="accordion100" accordion="my-accordion">
                 <h2 class="name-table">Аттестация</h2>
                 <div id="att-table-ajax">
-                  <table id="att" class="att">
+                  <table id="att" class="att responsive">
                   <thead>
                     <tr>
                       <th rowspan="2" >№</th>
                       <th rowspan="2" rowspan="3" width="230">ФИО</th>
-                      <th rowspan="2" >Всего <br/>баллов </th>
+                      <th rowspan="2"  >Всего <br/>баллов </th>
+                      <th rowspan="2" >
+                      Оценка
+                      </th>
+                      <th style="display:none" data-title="Оценка по требованиям преподавателя" rowspan="2" >
+                      Оценка*
+                      </th>
                       <th>Посещаемость</th>
 
                       <?php
@@ -1334,18 +1327,7 @@
                         echo '<th>Бонусные баллы</th>';
                       }
                       ?>
-                      <th rowspan="2" >
-                      Оценка
-                      </th>
-                      <th rowspan="2" >
-                      %
-                      </th>
-                      <th data-title="Оценка по требованиям преподавателя" rowspan="2" >
-                      Оценка*
-                      </th>
-                      <th data-title="Процент по требованиям преподавателя" rowspan="2" >
-                      %*
-                      </th>
+
 
 
 
@@ -1353,7 +1335,7 @@
                     <tr class="with-data-title">
 
                       <?php
-                      echo '<th class="number_t" style="cursor:text;" data-title="Сколько пар нужно было посетить" contenteditable onblur="update_att(';
+                      echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько пар нужно было посетить" contenteditable onblur="update_att(';
                       echo $rs->id;
                       echo ',';
                       echo "'at_visit'";
@@ -1369,7 +1351,7 @@
                         {
                           if($rs->at_tasks == null)
                           {
-                            echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                            echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
                             echo $rs->id;
                             echo ',';
                             echo "'at_tasks";
@@ -1381,7 +1363,7 @@
 
                           }
                           else {
-                            echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                            echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
                             echo $rs->id;
                             echo ',';
                             echo "'at_tasks";
@@ -1397,7 +1379,7 @@
 
                       if (!empty($test_info))
                       {
-                        echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                        echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
                         echo $rs->id;
                         echo ',';
                         echo "'at_tests'";
@@ -1410,7 +1392,7 @@
 
                       if (!empty($main_test_info))
                       {
-                        echo '<th class="number_t" style="cursor:text;" data-title="Сколько итоговых тестов должно быть сдано" contenteditable onblur="update_att(';
+                        echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько итоговых тестов должно быть сдано" contenteditable onblur="update_att(';
                         echo $rs->id;
                         echo ',';
                         echo "'at_main_tests'";
@@ -1423,7 +1405,7 @@
 
                       if (!empty($bonuses))
                       {
-                        echo '<th class="number_t" style="cursor:text;" data-title="Сколько бонусных должно быть заработано" contenteditable onblur="update_att(';
+                        echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько бонусных должно быть заработано" contenteditable onblur="update_att(';
                         echo $rs->id;
                         echo ',';
                         echo "'at_bonuses'";
@@ -1549,6 +1531,7 @@
                           {
                             for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
                             {
+                              ${'score_one_task'.$i} = $task->score_one;
                               $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
                             }
                           }
@@ -1585,8 +1568,100 @@
                       echo round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1) + $sum_bonus;
                       ?>
                     </td>
+<?php
+                    $score_att_visit = $at_visit_max * $score_one_lecture;
+                    $score_att_test = $at_test_max * $score_one_test;
+                    $score_att_main_test = $at_main_test_max * $score_one_main_test;
+                    $arr_score_att_task = array();
+                    $summ_att = 0;
+
+                    $summ_att = $score_att_visit + $score_att_test + $score_att_main_test;
+
+                    if(!empty($tasks))
+                    {
+                      for ($i = 0; $i < $countword; $i++) $summ_att += (${'score_one_task'.$i} * ${'at_task_max'.$i});
+                    }
+                    if($summ_att == 0)
+                    {
+                      $att_score_stud = 0;
+                    }
+                    else {
+                      $att_score_stud = (($summall*100)/$summ_att);
+                    }
 
 
+
+                    if(empty($att_score_stud))
+                    {
+                      echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%"> - </td>';
+                    }
+                    else {
+                      if($att_score_stud >= 85)
+                      {
+                        echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 5, '</td>';
+                      }
+                      if($att_score_stud < 85 && $att_score_stud >= 70)
+                      {
+                        echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 4, '</td>';
+                      }
+                      if($att_score_stud < 70 && $att_score_stud >= 55)
+                      {
+                        echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 3, '</td>';
+                      }
+                      if($att_score_stud < 55)
+                      {
+                        echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 2, '</td>';
+                      }
+                    }
+
+                      //на основе вбитых данных
+
+                      $score_att_visitp = $rs->at_visit * $score_one_lecture;
+                      $score_att_testp = $rs->at_tests * $score_one_test;
+                      $score_att_main_testp = $rs->at_main_tests * $score_one_main_test;
+                      $summ_attp = 0;
+
+                      $summ_attp = $score_att_visitp + $score_att_testp + $score_att_main_testp;
+
+                      if(!empty($tasks))
+                      {
+                        for ($i = 0; $i < $countword; $i++) $summ_attp += ((int)${'score_one_task'.$i} * (int)$att_mass[$i]);
+                      }
+
+
+                      if($summ_attp == 0)
+                      {
+                        $att_score_studp = 0;
+                      }
+                      else {
+                        $att_score_studp = (($summall*100)/$summ_attp);
+                      }
+
+                      if(empty($att_score_studp))
+                      {
+                        echo '<td style="display:none"> - </td>';
+                      }
+                      else {
+                        if($att_score_studp >= 85)
+                        {
+                          echo '<td style="display:none">', 5, '</td>';
+                        }
+                        if($att_score_studp < 85 && $att_score_studp >= 70)
+                        {
+                          echo '<td style="display:none">', 4, '</td>';
+                        }
+                        if($att_score_studp < 70 && $att_score_studp >= 55)
+                        {
+                          echo '<td style="display:none">', 3, '</td>';
+                        }
+                        if($att_score_studp < 55)
+                        {
+                          echo '<td style="display:none">', 2, '</td>';
+                        }
+                      }
+
+                      echo '<td style="display:none">',round($att_score_studp,1), '</td>';
+?>
 
                     <td>
                       <?php //Сумма баллов за посещение всех лекций
@@ -1627,7 +1702,7 @@
                           {
                             for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
                             {
-                              ${'score_one_task'.$i} = $task->score_one;
+
                               $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
                             }
                           }
@@ -1659,86 +1734,7 @@
 
                     //на основе сдачи работ студентов
 
-                    $score_att_visit = $at_visit_max * $score_one_lecture;
-                    $score_att_test = $at_test_max * $score_one_test;
-                    $score_att_main_test = $at_main_test_max * $score_one_main_test;
-                    $arr_score_att_task = array();
-                    $summ_att = 0;
 
-                    $summ_att = $score_att_visit + $score_att_test + $score_att_main_test;
-
-                    if(!empty($tasks))
-                    {
-                      for ($i = 0; $i < $countword; $i++) $summ_att += (${'score_one_task'.$i} * ${'at_task_max'.$i});
-                    }
-
-                    $att_score_stud = (($summall*100)/$summ_att);
-
-                    if(empty($att_score_stud))
-                    {
-                      echo '<td> - </td>';
-                    }
-                    else {
-                      if($att_score_stud >= 85)
-                      {
-                        echo '<td>', 5, '</td>';
-                      }
-                      if($att_score_stud < 85 && $att_score_stud >= 70)
-                      {
-                        echo '<td>', 4, '</td>';
-                      }
-                      if($att_score_stud < 70 && $att_score_stud >= 55)
-                      {
-                        echo '<td>', 3, '</td>';
-                      }
-                      if($att_score_stud < 55)
-                      {
-                        echo '<td>', 2, '</td>';
-                      }
-                    }
-
-                      echo '<td>',round($att_score_stud,1), '</td>';
-
-                      //на основе вбитых данных
-
-                      $score_att_visitp = $rs->at_visit * $score_one_lecture;
-                      $score_att_testp = $rs->at_tests * $score_one_test;
-                      $score_att_main_testp = $rs->at_main_tests * $score_one_main_test;
-                      $summ_attp = 0;
-
-                      $summ_attp = $score_att_visitp + $score_att_testp + $score_att_main_testp;
-
-                      if(!empty($tasks))
-                      {
-                        for ($i = 0; $i < $countword; $i++) $summ_attp += (${'score_one_task'.$i} * $att_mass[$i]);
-                      }
-
-                      $att_score_studp = (($summall*100)/$summ_attp);
-
-                      if(empty($att_score_studp))
-                      {
-                        echo '<td> - </td>';
-                      }
-                      else {
-                        if($att_score_studp >= 85)
-                        {
-                          echo '<td>', 5, '</td>';
-                        }
-                        if($att_score_studp < 85 && $att_score_studp >= 70)
-                        {
-                          echo '<td>', 4, '</td>';
-                        }
-                        if($att_score_studp < 70 && $att_score_studp >= 55)
-                        {
-                          echo '<td>', 3, '</td>';
-                        }
-                        if($att_score_studp < 55)
-                        {
-                          echo '<td>', 2, '</td>';
-                        }
-                      }
-
-                      echo '<td>',round($att_score_studp,1), '</td>';
 
                       ?>
                   </tr>
@@ -1760,33 +1756,55 @@
 
 
 
-
+<div id="ajax-bonus-form">
             <div id="bonus-form" class="bonus-form">
               <p>Проставлялка бонусных баллов</p>
 
-              <div style="margin-left:  20px;">
-                <a class="animated zoomIn" v-on:click="score = '5'">5</a>
-                <a class="animated zoomIn" style="animation-delay: 0.1s;" v-on:click="score = '10'">10</a>
-                <a class="animated zoomIn" style="animation-delay: 0.2s;" v-on:click="score = '15'">15</a>
-                <a class="animated zoomIn" style="animation-delay: 0.3s;" v-on:click="score = '20'">20</a>
-                <a class="animated zoomIn" style="animation-delay: 0.4s;" v-on:click="score = '25'">25</a>
-                <a class="animated zoomIn" style="animation-delay: 0.5s;" v-on:click="score = '30'">30</a>
+              <div style="margin-left:  20px;" >
+
+
+
+                <?php
+                $values = array();
+
+                $values = explode(',', $bonuse_info[0]->values);
+                foreach ($values as $vs )
+                {
+                    echo '<a onClick="$(';
+                    echo "'#count-bonus').val($(this).html());";
+                    echo '">',$vs;
+                    echo '</a>';
+                }
+                ?>
               </br>
-              <input id="count-bonus" placeholder="Количество баллов" v-model="score"/>
+              <input id="count-bonus" placeholder="Количество баллов"/><a v-b-tooltip.hover title="Добавить кнопку с таким значением" onClick="save_bonus_value()" id="save-value">+</a>
             </div>
             <div>
-              <a class="animated zoomIn" v-on:click="namescore = 'По презентации'">По презентации</a>
-              <a class="animated zoomIn" style="animation-delay: 0.1s;" v-on:click="namescore = 'По практическим'">По практическим</a>
-              <a class="animated zoomIn" style="animation-delay: 0.2s;" v-on:click="namescore = 'По компетенциям'">По компетенциям</a>
-              <a class="animated zoomIn" style="animation-delay: 0.3s;" v-on:click="namescore = 'По схемам'">По схемам</a>
+
+              <?php
+              $themes= array();
+
+              $themes = explode(',', $bonuse_info[0]->themes);
+              foreach ($themes as $ts )
+              {
+                if($ts!="")
+                {
+                  echo '<a onClick="$(';
+                  echo "'#info-bonus').val($(this).html());";
+                  echo '">',$ts;
+                  echo '</a>';
+                }
+              }
+              ?>
             </br>
-            <input id="info-bonus" style="width: 400px;" placeholder="Тема вопроса" v-model="namescore"/>
+            <input id="info-bonus" style="width: 400px;" placeholder="Тема вопроса"/><a v-b-tooltip.hover  title="Добавить кнопку с таким значением" onClick="save_bonus_theme()" id="save-value">+</a>
           </div>
           <div>
           <span class="block-rs-cookies"> <i class="fas fa-redo-alt rs_id_redo"></i><span id="cookie_rs_id">
             <?php
             $rs_str = 'teacher/rs/view/bonuses/'.$rs->id;
             $rs_str_att = 'teacher/rs/view/att/'.$rs->id;
+            $rs_str_bf = 'teacher/rs/view/bf/'.$rs->id;
             $str = 'rs'.$rs->id;
             if (!isset($_COOKIE[$str]))
             {
@@ -1794,7 +1812,7 @@
             }
             else echo $_COOKIE[$str];
              ?></span></span>
-          <button type="submit" class="button btn-stand"  style="margin-left:  8px;" name="rand" onClick="getrand('{{$string_stud_task}}')">И отвечает на вопрос:</button>
+          <button type="submit" class="button btn-stand"  style="margin-left:  8px;" name="rand" onClick="getrand()">И отвечает на вопрос:</button>
             <span id="oj" class="winner">Студент</span>
             <input type='hidden' id="id-stud-bonus" />
             <input id="id-rs-bonus" value="{{$rs->id}}" style="display:none;"/>
@@ -1808,6 +1826,7 @@
 
           <span id="suca" style="display: none"><i class="far fa-save save-bonus"></i></span>
 
+        </div>
         </div>
 
 
@@ -1855,6 +1874,51 @@
     });
     }
 
+    function save_bonus_value()
+    {
+      var value = $('#count-bonus').val();
+
+     $.ajax({
+      type: "POST",
+      beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));},
+      url:'{{URL::to("/save-value")}}',
+      data:{
+        id_rs: $("#id-rs-bonus").val(),
+        value:value
+      },
+      success: function(){
+        $("#ajax-bonus-form").load
+        ('<?php echo url($rs_str_bf); ?>');
+
+      }
+    });
+    }
+
+
+
+    function save_bonus_theme()
+    {
+      var value = $('#info-bonus').val();
+
+     $.ajax({
+      type: "POST",
+      beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));},
+      url:'{{URL::to("/save-theme")}}',
+      data:{
+        id_rs: $("#id-rs-bonus").val(),
+        value:value
+      },
+      success: function(){
+        $("#ajax-bonus-form").load
+        ('<?php echo url($rs_str_bf); ?>');
+
+      }
+    });
+    }
+
+
+
+
     function minus()
     {
 
@@ -1894,9 +1958,9 @@
 
 
 
-    function getrand(mass)
+    function getrand()
     {
-    console.log(mass);
+
     console.log(readCookie("rs" + $("#id-rs-bonus").val()));
 
 
@@ -1905,8 +1969,7 @@
       beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));},
       url:'{{URL::to("/getrand")}}',
       data:{
-        id_rs: $("#id-rs-bonus").val(),
-        array:mass
+        id_rs: $("#id-rs-bonus").val()
       },
       success: function(dat){
         var where = dat.lastIndexOf("/");
@@ -1938,9 +2001,8 @@
       isActive: false,
       array_stud: "",
       stroka: "",
-      item: 0,
-      score: "",
-      namescore: ""
+      item: 0
+
     }
 
     })
@@ -1949,7 +2011,7 @@
     <script>
 
     $(document).ready(function(){
-    $('.number_td').mask('0.0');
+    $('.number_td').mask('0.00');
 
     });
 
@@ -2166,14 +2228,33 @@
       return false;
     });
 
-    var padblock = $('#zapolnitel').height();
-    $('#bonus-form').css("margin-top", padblock);
+    console.log($('.with-data-title th').text());
+    var td = $('.with-data-title th').text();
+
+    if(td.length >0 )
+    {
+
+    }
+    else
+    {
+      $('.with-data-title th').css({
+      "box-shadow": "0 0 0 rgba(204,169,44, 0.4)",
+      "animation" : "pulse 2s infinite"});
+    }
+
+
 
     });
 
+    $(document).ready(function(){
+	$('.tabs a').click(function () {
 
+    $('.tabs a').not(this).removeClass('click');
+		$(this).toggleClass('click');
+  });
+	});
 
-    </script>
+  </script>
 
 
 

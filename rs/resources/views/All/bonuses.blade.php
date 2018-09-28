@@ -77,7 +77,7 @@
                     $title = $bonuse->info;
                   }
                 }
-                echo '<th class="bonus-td" data-title="', $title ,'">',$adfb,'</th>';
+                echo '<th class="bonus-td" v-b-tooltip.hover title="', $title ,'">',$adfb,'</th>';
               }
             }
             ?>

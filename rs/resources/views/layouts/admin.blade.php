@@ -12,6 +12,7 @@
 
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    @yield('jsheader')
     <script src="https://unpkg.com/vue"></script>
 
     <!-- Scripts -->

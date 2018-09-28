@@ -130,7 +130,7 @@
                   {
                     if($user->id == $student->id_student)
                     {
-                      
+
                       array_push($id_student_mass, $user->id); // id студентов
                       $idstudentnow = $user->id;
                     }
@@ -255,6 +255,12 @@
                   <th rowspan="2" >№</th>
                   <th rowspan="2" rowspan="3" width="230">ФИО</th>
                   <th rowspan="2" >Всего <br/>баллов </th>
+                  <th rowspan="2" >
+                  Оценка
+                  </th>
+                  <th style="display:none" v-b-tooltip.hover title="Оценка по требованиям преподавателя" rowspan="2" >
+                  Оценка*
+                  </th>
                   <th>Посещаемость</th>
 
                   <?php
@@ -288,18 +294,7 @@
                     echo '<th>Бонусные баллы</th>';
                   }
                   ?>
-                  <th rowspan="2" >
-                  Оценка
-                  </th>
-                  <th rowspan="2" >
-                  %
-                  </th>
-                  <th data-title="Оценка по требованиям преподавателя" rowspan="2" >
-                  Оценка*
-                  </th>
-                  <th data-title="Процент по требованиям преподавателя" rowspan="2" >
-                  %*
-                  </th>
+
 
 
 
@@ -307,7 +302,7 @@
                 <tr class="with-data-title">
 
                   <?php
-                  echo '<th class="number_t" style="cursor:text;" data-title="Сколько пар нужно было посетить" contenteditable onblur="update_att(';
+                  echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько пар нужно было посетить" contenteditable onblur="update_att(';
                   echo $rs->id;
                   echo ',';
                   echo "'at_visit'";
@@ -323,7 +318,7 @@
                     {
                       if($rs->at_tasks == null)
                       {
-                        echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                        echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
                         echo $rs->id;
                         echo ',';
                         echo "'at_tasks";
@@ -335,7 +330,7 @@
 
                       }
                       else {
-                        echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                        echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
                         echo $rs->id;
                         echo ',';
                         echo "'at_tasks";
@@ -351,7 +346,7 @@
 
                   if (!empty($test_info))
                   {
-                    echo '<th class="number_t" style="cursor:text;" data-title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
+                    echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько тестов должно быть сдано" contenteditable onblur="update_att(';
                     echo $rs->id;
                     echo ',';
                     echo "'at_tests'";
@@ -364,7 +359,7 @@
 
                   if (!empty($main_test_info))
                   {
-                    echo '<th class="number_t" style="cursor:text;" data-title="Сколько итоговых тестов должно быть сдано" contenteditable onblur="update_att(';
+                    echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько итоговых тестов должно быть сдано" contenteditable onblur="update_att(';
                     echo $rs->id;
                     echo ',';
                     echo "'at_main_tests'";
@@ -377,7 +372,7 @@
 
                   if (!empty($bonuses))
                   {
-                    echo '<th class="number_t" style="cursor:text;" data-title="Сколько бонусных должно быть заработано" contenteditable onblur="update_att(';
+                    echo '<th class="number_t" style="cursor:text;" v-b-tooltip.hover title="Сколько бонусных должно быть заработано" contenteditable onblur="update_att(';
                     echo $rs->id;
                     echo ',';
                     echo "'at_bonuses'";
@@ -503,12 +498,11 @@
                       {
                         for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
                         {
+                          ${'score_one_task'.$i} = $task->score_one;
                           $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
                         }
                       }
                     }
-
-
                   }
 
                   ?>
@@ -539,7 +533,88 @@
                   echo round($sum * $score_one_lecture, 1) + round($sumtask, 1) + round($mainsummscoretests, 1) + round($summscoretests, 1) + $sum_bonus;
                   ?>
                 </td>
+<?php
+                $score_att_visit = $at_visit_max * $score_one_lecture;
+                $score_att_test = $at_test_max * $score_one_test;
+                $score_att_main_test = $at_main_test_max * $score_one_main_test;
+                $arr_score_att_task = array();
+                $summ_att = 0;
 
+                $summ_att = $score_att_visit + $score_att_test + $score_att_main_test;
+
+                if(!empty($tasks))
+                {
+                  for ($i = 0; $i < $countword; $i++) $summ_att += (${'score_one_task'.$i} * ${'at_task_max'.$i});
+                }
+
+                $att_score_stud = (($summall*100)/$summ_att);
+
+                if(empty($att_score_stud))
+                {
+                  echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%"> - </td>';
+                }
+                else {
+                  if($att_score_stud >= 85)
+                  {
+                    echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 5, '</td>';
+                  }
+                  if($att_score_stud < 85 && $att_score_stud >= 70)
+                  {
+                    echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 4, '</td>';
+                  }
+                  if($att_score_stud < 70 && $att_score_stud >= 55)
+                  {
+                    echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 3, '</td>';
+                  }
+                  if($att_score_stud < 55)
+                  {
+                    echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 2, '</td>';
+                  }
+                }
+
+
+                  //на основе вбитых данных
+
+                  $score_att_visitp = $rs->at_visit * $score_one_lecture;
+                  $score_att_testp = $rs->at_tests * $score_one_test;
+                  $score_att_main_testp = $rs->at_main_tests * $score_one_main_test;
+                  $summ_attp = 0;
+
+                  $summ_attp = $score_att_visitp + $score_att_testp + $score_att_main_testp;
+
+                  if(!empty($tasks))
+                  {
+                    for ($i = 0; $i < $countword; $i++) $summ_attp += ((int)${'score_one_task'.$i} * (int)$att_mass[$i]);
+                  }
+
+                  $att_score_studp = (($summall*100)/$summ_attp);
+
+                  if(empty($att_score_studp))
+                  {
+                    echo '<td style="display:none"> - </td>';
+                  }
+                  else {
+                    if($att_score_studp >= 85)
+                    {
+                      echo '<td style="display:none">', 5, '</td>';
+                    }
+                    if($att_score_studp < 85 && $att_score_studp >= 70)
+                    {
+                      echo '<td style="display:none">', 4, '</td>';
+                    }
+                    if($att_score_studp < 70 && $att_score_studp >= 55)
+                    {
+                      echo '<td style="display:none">', 3, '</td>';
+                    }
+                    if($att_score_studp < 55)
+                    {
+                      echo '<td style="display:none">', 2, '</td>';
+                    }
+                  }
+
+
+
+?>
 
 
                 <td>
@@ -581,7 +656,7 @@
                       {
                         for ($j = 0; $j < $count_mass[$i]; $j++) // до количества работ типа Практическая 5 шт.
                         {
-                          ${'score_one_task'.$i} = $task->score_one;
+
                           $sumtask = $sumtask + ($task->score_one * ($task->{'task_' . $j} / 100));
                         }
                       }
@@ -613,86 +688,6 @@
 
                 //на основе сдачи работ студентов
 
-                $score_att_visit = $at_visit_max * $score_one_lecture;
-                $score_att_test = $at_test_max * $score_one_test;
-                $score_att_main_test = $at_main_test_max * $score_one_main_test;
-                $arr_score_att_task = array();
-                $summ_att = 0;
-
-                $summ_att = $score_att_visit + $score_att_test + $score_att_main_test;
-
-                if(!empty($tasks))
-                {
-                  for ($i = 0; $i < $countword; $i++) $summ_att += (${'score_one_task'.$i} * ${'at_task_max'.$i});
-                }
-
-                $att_score_stud = (($summall*100)/$summ_att);
-
-                if(empty($att_score_stud))
-                {
-                  echo '<td> - </td>';
-                }
-                else {
-                  if($att_score_stud >= 85)
-                  {
-                    echo '<td>', 5, '</td>';
-                  }
-                  if($att_score_stud < 85 && $att_score_stud >= 70)
-                  {
-                    echo '<td>', 4, '</td>';
-                  }
-                  if($att_score_stud < 70 && $att_score_stud >= 55)
-                  {
-                    echo '<td>', 3, '</td>';
-                  }
-                  if($att_score_stud < 55)
-                  {
-                    echo '<td>', 2, '</td>';
-                  }
-                }
-
-                  echo '<td>',round($att_score_stud,1), '</td>';
-
-                  //на основе вбитых данных
-
-                  $score_att_visitp = $rs->at_visit * $score_one_lecture;
-                  $score_att_testp = $rs->at_tests * $score_one_test;
-                  $score_att_main_testp = $rs->at_main_tests * $score_one_main_test;
-                  $summ_attp = 0;
-
-                  $summ_attp = $score_att_visitp + $score_att_testp + $score_att_main_testp;
-
-                  if(!empty($tasks))
-                  {
-                    for ($i = 0; $i < $countword; $i++) $summ_attp += (${'score_one_task'.$i} * $att_mass[$i]);
-                  }
-
-                  $att_score_studp = (($summall*100)/$summ_attp);
-
-                  if(empty($att_score_studp))
-                  {
-                    echo '<td> - </td>';
-                  }
-                  else {
-                    if($att_score_studp >= 85)
-                    {
-                      echo '<td>', 5, '</td>';
-                    }
-                    if($att_score_studp < 85 && $att_score_studp >= 70)
-                    {
-                      echo '<td>', 4, '</td>';
-                    }
-                    if($att_score_studp < 70 && $att_score_studp >= 55)
-                    {
-                      echo '<td>', 3, '</td>';
-                    }
-                    if($att_score_studp < 55)
-                    {
-                      echo '<td>', 2, '</td>';
-                    }
-                  }
-
-                  echo '<td>',round($att_score_studp,1), '</td>';
 
                   ?>
               </tr>

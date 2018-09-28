@@ -115,6 +115,10 @@ Route::post('/update-date', ['as' => '/update-date', 'uses' => 'Teacher\RSContro
 Route::post('/plus', ['as' => '/plus', 'uses' => 'Teacher\RSController@plus'])->name('plus');
 Route::post('/minus', ['as' => '/minus', 'uses' => 'Teacher\RSController@minus'])->name('minus');
 Route::post('/update-att', ['as' => '/update-att', 'uses' => 'Teacher\RSController@updateATT'])->name('update-att');
+Route::post('/save-value', ['as' => '/save-value', 'uses' => 'Teacher\RSController@saveVAL'])->name('save-value');
+Route::post('/save-theme', ['as' => '/save-theme', 'uses' => 'Teacher\RSController@saveTHM'])->name('save-theme');
+
+
 
 
 
@@ -168,6 +172,8 @@ Route::group(['middleware' => ['teacher'], 'prefix' => 'teacher'], function() {
     Route::get('/rs/view/bonuses/{id}', 'Teacher\RSController@viewBonusesRS');
 
     Route::get('/rs/view/att/{id}', 'Teacher\RSController@viewATTRS');
+
+    Route::get('/rs/view/bf/{id}', 'Teacher\RSController@viewBF');
 
 
 
