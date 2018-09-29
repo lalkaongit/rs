@@ -249,16 +249,16 @@
 
           ?>
 
-              <table class="att">
+              <table id="att" class="att">
               <thead>
                 <tr>
                   <th rowspan="2" >№</th>
-                  <th rowspan="2" rowspan="3" width="230">ФИО</th>
+                  <th rowspan="2" width="230">ФИО</th>
                   <th rowspan="2" >Всего <br/>баллов </th>
-                  <th rowspan="2" >
+                  <th onclick="changedef()" id="def-oc" rowspan="2" >
                   Оценка
                   </th>
-                  <th style="display:none" v-b-tooltip.hover title="Оценка по требованиям преподавателя" rowspan="2" >
+                  <th onclick="changeteach()" rowspan="2" id="teach-oc" style="display:none" v-b-tooltip.hover title="Оценка по требованиям преподавателя">
                   Оценка*
                   </th>
                   <th>Посещаемость</th>
@@ -551,24 +551,24 @@
 
                 if(empty($att_score_stud))
                 {
-                  echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%"> - </td>';
+                  echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%"> 2 </td>';
                 }
                 else {
                   if($att_score_stud >= 85)
                   {
-                    echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 5, '</td>';
+                    echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 5, '</td>';
                   }
                   if($att_score_stud < 85 && $att_score_stud >= 70)
                   {
-                    echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 4, '</td>';
+                    echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 4, '</td>';
                   }
                   if($att_score_stud < 70 && $att_score_stud >= 55)
                   {
-                    echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 3, '</td>';
+                    echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 3, '</td>';
                   }
                   if($att_score_stud < 55)
                   {
-                    echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 2, '</td>';
+                    echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 2, '</td>';
                   }
                 }
 
@@ -591,24 +591,24 @@
 
                   if(empty($att_score_studp))
                   {
-                    echo '<td style="display:none"> - </td>';
+                    echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%"> 2 </td>';
                   }
                   else {
                     if($att_score_studp >= 85)
                     {
-                      echo '<td style="display:none">', 5, '</td>';
+                      echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%">', 5, '</td>';
                     }
                     if($att_score_studp < 85 && $att_score_studp >= 70)
                     {
-                      echo '<td style="display:none">', 4, '</td>';
+                      echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%">', 4, '</td>';
                     }
                     if($att_score_studp < 70 && $att_score_studp >= 55)
                     {
-                      echo '<td style="display:none">', 3, '</td>';
+                      echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%">', 3, '</td>';
                     }
                     if($att_score_studp < 55)
                     {
-                      echo '<td style="display:none">', 2, '</td>';
+                      echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%">', 2, '</td>';
                     }
                   }
 

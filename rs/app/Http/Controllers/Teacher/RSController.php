@@ -897,12 +897,6 @@ class RSController extends Controller
 
         $score = round(($sum/100) * $request->scr_one, 1);
 
-
-
-
-
-
-
         if(empty($request->text))
         {
           $sum = " - ";
@@ -924,18 +918,10 @@ class RSController extends Controller
               $sum = 2;
             }
 
-
-
-
-
-
         $dat['score'] = $score;
         $dat['value'] = $sum;
 
         return $dat;
-
-
-
     }
 
     public function updateTestRS(Request $request)
@@ -1091,10 +1077,6 @@ class RSController extends Controller
 
       $fortasks = count($counttasks_mass);
 
-
-
-
-
         if (substr($request->name_column,0,-1)  == "at_tasks" )
         {
           $namecol = substr($request->name_column,0,-1);
@@ -1134,13 +1116,15 @@ class RSController extends Controller
 
     public function updateDATE(Request $request)
     {
-
-
         $data = array();
 
         $data[$request->name_column] = $request->text;
 
         DB::table('dates')->where('id_rs', $request->id_rs)->update($data);
+    }
+
+    public function refresgAtt(Request $request)
+    {
 
     }
 

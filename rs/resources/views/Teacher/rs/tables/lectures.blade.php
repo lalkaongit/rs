@@ -79,9 +79,9 @@
             @endif
             <div class="tabs">
 
-              <a class="animated bounce click" style="animation-delay: 0.1s;" v-b-toggle.accordion99 onClick="window.location.reload()">Успеваемость</a>
+              <a  class="animated bounce click" style="animation-delay: 0.1s;" v-b-toggle.accordion99 onClick="window.location.reload()">Успеваемость</a>
               <a class="animated bounce" style="animation-delay: 0.2s;" v-b-toggle.accordion0 >Посещаемость</a>
-              <a class="animated bounce" style="animation-delay: 0.3s;" v-b-toggle.accordion100 >Аттестация</a>
+              <a onclick="refresh_att()"  id="att-but" class="animated bounce" style="animation-delay: 0.3s;" v-b-toggle.accordion100 >Аттестация</a>
             </br>
 
             <?php
@@ -1288,10 +1288,10 @@
                       <th rowspan="2" >№</th>
                       <th rowspan="2" rowspan="3" width="230">ФИО</th>
                       <th rowspan="2"  >Всего <br/>баллов </th>
-                      <th rowspan="2" >
+                      <th onclick="changedef()" id="def-oc" rowspan="2" >
                       Оценка
                       </th>
-                      <th style="display:none" data-title="Оценка по требованиям преподавателя" rowspan="2" >
+                      <th onclick="changeteach()" style="display:none" id="teach-oc" v-b-tooltip.hover  title="Оценка по требованиям преподавателя" rowspan="2" >
                       Оценка*
                       </th>
                       <th>Посещаемость</th>
@@ -1593,24 +1593,24 @@
 
                     if(empty($att_score_stud))
                     {
-                      echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%"> - </td>';
+                      echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%"> 2 </td>';
                     }
                     else {
                       if($att_score_stud >= 85)
                       {
-                        echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 5, '</td>';
+                        echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 5, '</td>';
                       }
                       if($att_score_stud < 85 && $att_score_stud >= 70)
                       {
-                        echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 4, '</td>';
+                        echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 4, '</td>';
                       }
                       if($att_score_stud < 70 && $att_score_stud >= 55)
                       {
-                        echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 3, '</td>';
+                        echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 3, '</td>';
                       }
                       if($att_score_stud < 55)
                       {
-                        echo '<td v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 2, '</td>';
+                        echo '<td id="def-oc-td" v-b-tooltip.hover title="',round($att_score_stud,1),'%">', 2, '</td>';
                       }
                     }
 
@@ -1625,8 +1625,15 @@
 
                       if(!empty($tasks))
                       {
-                        for ($i = 0; $i < $countword; $i++) $summ_attp += ((int)${'score_one_task'.$i} * (int)$att_mass[$i]);
+                        for ($i = 0; $i < $countword; $i++)
+                        {
+                          if(isset($att_mass[$i]))
+                          {
+                            $summ_attp += ((int)${'score_one_task'.$i} * (int)$att_mass[$i]);
+                          }
+                        }
                       }
+
 
 
                       if($summ_attp == 0)
@@ -1639,28 +1646,28 @@
 
                       if(empty($att_score_studp))
                       {
-                        echo '<td style="display:none"> - </td>';
+                        echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%"> 2 </td>';
                       }
                       else {
                         if($att_score_studp >= 85)
                         {
-                          echo '<td style="display:none">', 5, '</td>';
+                          echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%">', 5, '</td>';
                         }
                         if($att_score_studp < 85 && $att_score_studp >= 70)
                         {
-                          echo '<td style="display:none">', 4, '</td>';
+                          echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%">', 4, '</td>';
                         }
                         if($att_score_studp < 70 && $att_score_studp >= 55)
                         {
-                          echo '<td style="display:none">', 3, '</td>';
+                          echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%">', 3, '</td>';
                         }
                         if($att_score_studp < 55)
                         {
-                          echo '<td style="display:none">', 2, '</td>';
+                          echo '<td id="teach-oc-td" style="display:none" v-b-tooltip.hover title="',round($att_score_studp,1),'%">', 2, '</td>';
                         }
                       }
 
-                      echo '<td style="display:none">',round($att_score_studp,1), '</td>';
+
 ?>
 
                     <td>
@@ -1873,6 +1880,27 @@
       }
     });
     }
+
+
+
+    function refresh_att()
+    {
+
+     $.ajax({
+      type: "POST",
+      beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));},
+      url:'{{URL::to("/att-refresh")}}',
+      data:{
+        id_rs: $("#id-rs-bonus").val()
+      },
+      success: function(){
+        $("#att-table-ajax").load
+        ('<?php echo url($rs_str_att); ?>');
+      }
+    });
+    }
+
+
 
     function save_bonus_value()
     {
@@ -2163,6 +2191,13 @@
 
 
 
+
+
+
+
+
+
+
     function update_date(id_rs, text, name_column)
     {
 
@@ -2246,12 +2281,31 @@
 
     });
 
+    function changedef() {
+        $('#def-oc').css("display", "none");
+        $('td#def-oc-td').css("display", "none");
+
+        $('#teach-oc').css("display", "table-cell");
+        $('td#teach-oc-td').css("display", "table-cell");
+      }
+
+      function changeteach() {
+        $('#teach-oc').css("display", "none");
+        $('td#teach-oc-td').css("display", "none");
+
+        $('#def-oc').css("display", "table-cell");
+        $('td#def-oc-td').css("display", "table-cell");
+      }
+
     $(document).ready(function(){
 	$('.tabs a').click(function () {
 
     $('.tabs a').not(this).removeClass('click');
 		$(this).toggleClass('click');
   });
+
+
+
 	});
 
   </script>

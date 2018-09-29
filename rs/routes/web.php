@@ -117,7 +117,7 @@ Route::post('/minus', ['as' => '/minus', 'uses' => 'Teacher\RSController@minus']
 Route::post('/update-att', ['as' => '/update-att', 'uses' => 'Teacher\RSController@updateATT'])->name('update-att');
 Route::post('/save-value', ['as' => '/save-value', 'uses' => 'Teacher\RSController@saveVAL'])->name('save-value');
 Route::post('/save-theme', ['as' => '/save-theme', 'uses' => 'Teacher\RSController@saveTHM'])->name('save-theme');
-
+Route::post('/att-refresh', ['as' => '/att-refresh', 'uses' => 'Teacher\RSController@refresgAtt'])->name('att-refresh');
 
 
 
